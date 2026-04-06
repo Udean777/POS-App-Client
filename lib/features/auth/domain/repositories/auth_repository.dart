@@ -22,4 +22,12 @@ abstract class AuthRepository {
   });
 
   Future<Either<Failure, List<UserEntity>>> getStaff();
+
+  Future<Either<Failure, void>> updateBusiness({
+    required String name,
+    required String type,
+    required String address,
+    required String phone,
+    String? logoUrl,
+  });
 }

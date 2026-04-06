@@ -53,7 +53,7 @@ class DashboardScreen extends ConsumerWidget {
             // Header dan Statistik Ringkas
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.only(top: 60, bottom: 8),
+                padding: const EdgeInsets.symmetric(vertical: 60),
                 child: StackedStatCarousel(
                   totalProducts: totalProducts,
                   transactionsToday: transactionsToday,
@@ -66,37 +66,38 @@ class DashboardScreen extends ConsumerWidget {
               child: profileAsync.when(
                 data: (user) {
                   final bool isOwner = user.role == "OWNER";
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16, top: 32),
-                    child: DashboardShortcuts(
-                      onMoreTap: () => context.push('/all-menu'),
-                      items: [
-                        ShortcutItem(
-                          title: "Produk",
-                          icon: Icons.inventory_2_outlined,
-                          onTap: () => context.pushNamed('products'),
-                        ),
-                        ShortcutItem(
-                          title: "Transaksi",
-                          icon: Icons.point_of_sale_outlined,
-                          color: Colors.orange,
-                          onTap: () => context.pushNamed('pos'),
-                        ),
-                        if (isOwner)
-                          ShortcutItem(
-                            title: "Staf",
-                            icon: Icons.people_outline,
-                            color: Colors.teal,
-                            onTap: () => context.pushNamed('staff'),
-                          ),
-                        ShortcutItem(
-                          title: "Riwayat",
-                          icon: Icons.history,
-                          color: Colors.blue,
-                          onTap: () => context.pushNamed('history'),
-                        ),
-                      ],
+
+                  // Define the original shortcuts
+                  final List<ShortcutItem> displayedItems = [
+                    ShortcutItem(
+                      title: "Produk",
+                      icon: Icons.inventory_2_outlined,
+                      onTap: () => context.pushNamed('products'),
                     ),
+                    ShortcutItem(
+                      title: "Transaksi",
+                      icon: Icons.point_of_sale_outlined,
+                      color: Colors.orange,
+                      onTap: () => context.pushNamed('pos'),
+                    ),
+                    if (isOwner)
+                      ShortcutItem(
+                        title: "Staf",
+                        icon: Icons.people_outline,
+                        color: Colors.teal,
+                        onTap: () => context.pushNamed('staff'),
+                      ),
+                    ShortcutItem(
+                      title: "Riwayat",
+                      icon: Icons.history,
+                      color: Colors.blue,
+                      onTap: () => context.pushNamed('history'),
+                    ),
+                  ];
+
+                  return DashboardShortcuts(
+                    onMoreTap: () => context.push('/all-menu'),
+                    items: displayedItems,
                   );
                 },
                 loading: () => const SizedBox(height: 100),

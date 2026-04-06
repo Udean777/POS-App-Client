@@ -14,6 +14,7 @@ import 'package:client/features/products/presentation/screens/add_product_screen
 import 'package:client/features/products/presentation/screens/edit_product_screen.dart';
 import 'package:client/features/products/presentation/screens/product_detail_screen.dart';
 import 'package:client/features/products/presentation/screens/product_list_screen.dart';
+import 'package:client/features/auth/presentation/screens/store_config_screen.dart';
 import 'package:client/features/transaction/presentation/screens/pos_screen.dart';
 import 'package:client/features/transaction/presentation/screens/transaction_history_screen.dart';
 import 'package:flutter/material.dart';
@@ -105,6 +106,11 @@ GoRouter goRouter(Ref ref) {
             ],
           ),
         ],
+      ),
+      GoRoute(
+        path: '/store-config',
+        name: 'store_config',
+        builder: (context, state) => const StoreConfigScreen(),
       ),
 
       // Auth Management (Owner Only)

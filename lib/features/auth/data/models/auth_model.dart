@@ -13,6 +13,8 @@ abstract class UserModel with _$UserModel {
     @JsonKey(name: 'business_name') @Default('') String businessName,
     @JsonKey(name: 'business_type') @Default('') String businessType,
     @JsonKey(name: 'business_address') @Default('') String businessAddress,
+    @JsonKey(name: 'business_phone') @Default('') String businessPhone,
+    @JsonKey(name: 'business_logo_url') @Default('') String businessLogoUrl,
     @Default('UNSET') String role,
   }) = _UserModel;
 
@@ -28,6 +30,8 @@ extension UserModelX on UserModel {
     businessName: businessName,
     businessType: businessType,
     businessAddress: businessAddress,
+    businessPhone: businessPhone,
+    businessLogoUrl: businessLogoUrl,
     role: role,
   );
 }

@@ -91,24 +91,20 @@ class DashboardShortcuts extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        SizedBox(
-          height: 100,
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            scrollDirection: Axis.horizontal,
-            itemCount: items.length + 1,
-            separatorBuilder: (context, index) => const SizedBox(width: 20),
-            itemBuilder: (context, index) {
-              if (index == items.length) {
-                return ShortcutItem(
-                  title: "Lainnya",
-                  icon: Icons.grid_view_rounded,
-                  onTap: onMoreTap,
-                  color: Colors.grey[600],
-                );
-              }
-              return items[index];
-            },
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ...items,
+              ShortcutItem(
+                title: "Lainnya",
+                icon: Icons.grid_view_rounded,
+                onTap: onMoreTap,
+                color: Colors.grey[600],
+              ),
+            ],
           ),
         ),
       ],

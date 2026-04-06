@@ -13,6 +13,8 @@ _UserModel _$UserModelFromJson(Map<String, dynamic> json) => _UserModel(
   businessName: json['business_name'] as String? ?? '',
   businessType: json['business_type'] as String? ?? '',
   businessAddress: json['business_address'] as String? ?? '',
+  businessPhone: json['business_phone'] as String? ?? '',
+  businessLogoUrl: json['business_logo_url'] as String? ?? '',
   role: json['role'] as String? ?? 'UNSET',
 );
 
@@ -24,5 +26,7 @@ Map<String, dynamic> _$UserModelToJson(_UserModel instance) =>
       'business_name': instance.businessName,
       'business_type': instance.businessType,
       'business_address': instance.businessAddress,
+      'business_phone': instance.businessPhone,
+      'business_logo_url': instance.businessLogoUrl,
       'role': instance.role,
     };

@@ -7,6 +7,13 @@ abstract class AuthRemoteDataSource {
   Future<UserModel> fetchProfile();
   Future<void> createStaff(String email, String password);
   Future<List<UserModel>> fetchStaff();
+  Future<void> updateBusiness({
+    required String name,
+    required String type,
+    required String address,
+    required String phone,
+    String? logoUrl,
+  });
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -61,5 +68,25 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final response = await _dio.get('/auth/staff');
     final List list = response.data;
     return list.map((e) => UserModel.fromJson(e)).toList();
+  }
+
+  @override
+  Future<void> updateBusiness({
+    required String name,
+    required String type,
+    required String address,
+    required String phone,
+    String? logoUrl,
+  }) async {
+    await _dio.put(
+      '/auth/business',
+      data: {
+        'name': name,
+        'type': type,
+        'address': address,
+        'phone': phone,
+        if (logoUrl != null) 'logo_url': logoUrl,
+      },
+    );
   }
 }
