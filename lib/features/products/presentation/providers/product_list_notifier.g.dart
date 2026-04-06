@@ -9,12 +9,12 @@ part of 'product_list_notifier.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(ProductListNotifier)
-final productListProvider = ProductListNotifierProvider._();
+@ProviderFor(ProductList)
+final productListProvider = ProductListProvider._();
 
-final class ProductListNotifierProvider
-    extends $AsyncNotifierProvider<ProductListNotifier, List<ProductEntity>> {
-  ProductListNotifierProvider._()
+final class ProductListProvider
+    extends $AsyncNotifierProvider<ProductList, List<ProductEntity>> {
+  ProductListProvider._()
     : super(
         from: null,
         argument: null,
@@ -26,18 +26,16 @@ final class ProductListNotifierProvider
       );
 
   @override
-  String debugGetCreateSourceHash() => _$productListNotifierHash();
+  String debugGetCreateSourceHash() => _$productListHash();
 
   @$internal
   @override
-  ProductListNotifier create() => ProductListNotifier();
+  ProductList create() => ProductList();
 }
 
-String _$productListNotifierHash() =>
-    r'cc742a065d27776ff313c82abdddfae62e285ab1';
+String _$productListHash() => r'46432925644c0ac53e53944bcd3fd75f3c4c1c2a';
 
-abstract class _$ProductListNotifier
-    extends $AsyncNotifier<List<ProductEntity>> {
+abstract class _$ProductList extends $AsyncNotifier<List<ProductEntity>> {
   FutureOr<List<ProductEntity>> build();
   @$mustCallSuper
   @override

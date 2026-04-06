@@ -198,3 +198,99 @@ final class AddProductUsecaseProvider
 }
 
 String _$addProductUsecaseHash() => r'1c00efa9f6ea6db8c6aa5a5f057f860ee47b8a17';
+
+@ProviderFor(updateProductUsecase)
+final updateProductUsecaseProvider = UpdateProductUsecaseProvider._();
+
+final class UpdateProductUsecaseProvider
+    extends
+        $FunctionalProvider<
+          UpdateProductUsecase,
+          UpdateProductUsecase,
+          UpdateProductUsecase
+        >
+    with $Provider<UpdateProductUsecase> {
+  UpdateProductUsecaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'updateProductUsecaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$updateProductUsecaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<UpdateProductUsecase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  UpdateProductUsecase create(Ref ref) {
+    return updateProductUsecase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(UpdateProductUsecase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<UpdateProductUsecase>(value),
+    );
+  }
+}
+
+String _$updateProductUsecaseHash() =>
+    r'b909b30bac852e46fb3109b7e3b832e2653a79f7';
+
+@ProviderFor(deleteProductUsecase)
+final deleteProductUsecaseProvider = DeleteProductUsecaseProvider._();
+
+final class DeleteProductUsecaseProvider
+    extends
+        $FunctionalProvider<
+          DeleteProductUsecase,
+          DeleteProductUsecase,
+          DeleteProductUsecase
+        >
+    with $Provider<DeleteProductUsecase> {
+  DeleteProductUsecaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deleteProductUsecaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deleteProductUsecaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<DeleteProductUsecase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  DeleteProductUsecase create(Ref ref) {
+    return deleteProductUsecase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DeleteProductUsecase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DeleteProductUsecase>(value),
+    );
+  }
+}
+
+String _$deleteProductUsecaseHash() =>
+    r'9d7715354b116b3d6aadb785ec3551f6389d51e1';

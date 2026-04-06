@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'product_list_notifier.g.dart';
 
 @riverpod
-class ProductListNotifier extends _$ProductListNotifier {
+class ProductList extends _$ProductList {
   @override
   Future<List<ProductEntity>> build() async {
     return _fetchProducts();

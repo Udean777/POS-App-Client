@@ -54,8 +54,41 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteProduct(String id) {
-    // Implementasi hapus bisa kita buat nanti
-    throw UnimplementedError();
+  Future<Either<Failure, void>> updateProduct(ProductEntity product) async {
+    try {
+      final data = {
+        "name": product.name,
+        "description": product.description,
+        "category": product.category,
+        "variants": product.variants
+            .map(
+              (v) => {
+                "id": v.id,
+                "name": v.name,
+                "price": v.price,
+                "stock": v.stock,
+                "sku": v.sku,
+              },
+            )
+            .toList(),
+      };
+
+      await remoteDataSource.updateProduct(product.id, data);
+      return const Right(null);
+    } on DioException catch (e) {
+      return Left(Failure(e.response?.data['error'] ?? "Gagal update produk"));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteProduct(String id) async {
+    try {
+      await remoteDataSource.deleteProduct(id);
+      return const Right(null);
+    } on DioException catch (e) {
+      return Left(
+        Failure(e.response?.data['error'] ?? "Gagal menghapus produk"),
+      );
+    }
   }
 }

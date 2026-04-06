@@ -1,5 +1,5 @@
 import 'package:client/features/products/domain/entities/product_entity.dart';
-import 'package:client/features/products/presentation/providers/add_product_notifier.dart';
+import 'package:client/features/products/presentation/providers/product_actions_notifier.dart';
 import 'package:client/features/products/presentation/widgets/product_form_section.dart';
 import 'package:client/features/products/presentation/widgets/variant_input_card.dart';
 import 'package:flutter/material.dart';
@@ -7,29 +7,47 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
-class AddProductScreen extends ConsumerStatefulWidget {
-  const AddProductScreen({super.key});
+class EditProductScreen extends ConsumerStatefulWidget {
+  final ProductEntity product;
+  const EditProductScreen({super.key, required this.product});
 
   @override
-  ConsumerState<AddProductScreen> createState() => _AddProductScreenState();
+  ConsumerState<EditProductScreen> createState() => _EditProductScreenState();
 }
 
-class _AddProductScreenState extends ConsumerState<AddProductScreen> {
+class _EditProductScreenState extends ConsumerState<EditProductScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _categoryController = TextEditingController();
-  final _descController = TextEditingController();
 
-  // Mode: Simple vs Multiple Variants
+  late final _nameController = TextEditingController(text: widget.product.name);
+  late final _categoryController = TextEditingController(
+    text: widget.product.category,
+  );
+  late final _descController = TextEditingController(
+    text: widget.product.description,
+  );
+
   bool _isMultiVariant = false;
-
-  // Single variant data (for simple mode)
   double _price = 0;
   int _stock = 0;
   String _sku = '';
+  List<VariantEntity> _variants = [];
 
-  // Multi variant data
-  final List<VariantEntity> _variants = [];
+  @override
+  void initState() {
+    super.initState();
+    _isMultiVariant =
+        widget.product.variants.length > 1 ||
+        (widget.product.variants.isNotEmpty &&
+            widget.product.variants.first.name != 'Default');
+
+    _variants = List.from(widget.product.variants);
+
+    if (!_isMultiVariant && _variants.isNotEmpty) {
+      _price = _variants.first.price;
+      _stock = _variants.first.stock;
+      _sku = _variants.first.sku;
+    }
+  }
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
@@ -38,7 +56,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
     if (!_isMultiVariant) {
       finalVariants = [
         VariantEntity(
-          id: const Uuid().v4(),
+          id: _variants.isNotEmpty ? _variants.first.id : const Uuid().v4(),
           name: 'Default',
           price: _price,
           stock: _stock,
@@ -55,15 +73,14 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
       finalVariants = _variants;
     }
 
-    final product = ProductEntity(
-      id: const Uuid().v4(),
+    final updatedProduct = widget.product.copyWith(
       name: _nameController.text,
       description: _descController.text,
       category: _categoryController.text,
       variants: finalVariants,
     );
 
-    ref.read(addProductProvider.notifier).addProduct(product);
+    ref.read(productActionsProvider.notifier).updateProduct(updatedProduct);
   }
 
   @override
@@ -76,13 +93,13 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AsyncValue<void>>(addProductProvider, (prev, next) {
+    ref.listen<AsyncValue<void>>(productActionsProvider, (prev, next) {
       next.whenOrNull(
         data: (_) {
           if (prev?.isLoading == true) {
             context.pop();
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Produk berhasil ditambahkan")),
+              const SnackBar(content: Text("Produk berhasil diperbarui")),
             );
           }
         },
@@ -92,12 +109,12 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
       );
     });
 
-    final state = ref.watch(addProductProvider);
+    final state = ref.watch(productActionsProvider);
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text("Tambah Produk Baru"),
+        title: const Text("Edit Produk"),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -107,7 +124,6 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           children: [
-            // Section 1: Basic Info
             ProductFormSection(
               title: "Informasi Dasar",
               icon: Icons.inventory_2_outlined,
@@ -141,8 +157,6 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                 ],
               ),
             ),
-
-            // Section 2: Pricing & Variants
             ProductFormSection(
               title: "Harga & Inventaris",
               icon: Icons.sell_outlined,
@@ -156,19 +170,17 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                       "Punya banyak varian?",
                       style: TextStyle(fontWeight: FontWeight.w500),
                     ),
-                    subtitle: const Text(
-                      "Aktifkan jika produk punya ukuran/rasa berbeda",
-                    ),
+                    subtitle: const Text("Aktifkan untuk rasa/ukuran berbeda"),
                     contentPadding: EdgeInsets.zero,
                   ),
                   const SizedBox(height: 20),
                   if (!_isMultiVariant) ...[
-                    // Simple Mode
                     Row(
                       children: [
                         Expanded(
                           flex: 3,
                           child: TextFormField(
+                            initialValue: _price > 0 ? _price.toString() : '',
                             keyboardType: TextInputType.number,
                             decoration: const InputDecoration(
                               labelText: 'Harga Jual',
@@ -181,6 +193,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                         Expanded(
                           flex: 2,
                           child: TextFormField(
+                            initialValue: _stock > 0 ? _stock.toString() : '',
                             keyboardType: TextInputType.number,
                             decoration: const InputDecoration(
                               labelText: 'Stok',
@@ -192,6 +205,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
+                      initialValue: _sku,
                       decoration: const InputDecoration(
                         labelText: 'SKU (Opsional)',
                         hintText: 'Kode unik produk',
@@ -199,7 +213,6 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                       onChanged: (v) => _sku = v,
                     ),
                   ] else ...[
-                    // Multi Variant Mode
                     ..._variants.asMap().entries.map((entry) {
                       return VariantInputCard(
                         variant: entry.value,
@@ -263,7 +276,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
                       strokeWidth: 2,
                     ),
                   )
-                : const Text("Simpan Produk"),
+                : const Text("Simpan Perubahan"),
           ),
         ),
       ),

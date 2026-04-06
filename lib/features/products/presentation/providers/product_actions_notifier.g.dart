@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'add_product_notifier.dart';
+part of 'product_actions_notifier.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,28 +9,28 @@ part of 'add_product_notifier.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(AddProduct)
-final addProductProvider = AddProductProvider._();
+@ProviderFor(ProductActions)
+final productActionsProvider = ProductActionsProvider._();
 
-final class AddProductProvider
-    extends $NotifierProvider<AddProduct, AsyncValue<void>> {
-  AddProductProvider._()
+final class ProductActionsProvider
+    extends $NotifierProvider<ProductActions, AsyncValue<void>> {
+  ProductActionsProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'addProductProvider',
+        name: r'productActionsProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$addProductHash();
+  String debugGetCreateSourceHash() => _$productActionsHash();
 
   @$internal
   @override
-  AddProduct create() => AddProduct();
+  ProductActions create() => ProductActions();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(AsyncValue<void> value) {
@@ -41,9 +41,9 @@ final class AddProductProvider
   }
 }
 
-String _$addProductHash() => r'6f4bfee37a4dbd492017b7a83ed7392d74864a92';
+String _$productActionsHash() => r'dd812d3e68965032ee65b9903152a1f0f15848e2';
 
-abstract class _$AddProduct extends $Notifier<AsyncValue<void>> {
+abstract class _$ProductActions extends $Notifier<AsyncValue<void>> {
   AsyncValue<void> build();
   @$mustCallSuper
   @override

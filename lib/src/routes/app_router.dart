@@ -4,7 +4,10 @@ import 'package:client/features/auth/presentation/providers/state/auth_state.dar
 import 'package:client/features/auth/presentation/screens/login_screen.dart';
 import 'package:client/features/auth/presentation/screens/register_screen.dart';
 import 'package:client/features/dashboard/presentation/screens/dashboard_screen.dart';
+import 'package:client/features/products/domain/entities/product_entity.dart';
 import 'package:client/features/products/presentation/screens/add_product_screen.dart';
+import 'package:client/features/products/presentation/screens/edit_product_screen.dart';
+import 'package:client/features/products/presentation/screens/product_detail_screen.dart';
 import 'package:client/features/products/presentation/screens/product_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -90,6 +93,22 @@ GoRouter goRouter(Ref ref) {
         path: '/products/add',
         name: 'add_product',
         builder: (context, state) => const AddProductScreen(),
+      ),
+      GoRoute(
+        path: '/products/detail',
+        name: 'product_detail',
+        builder: (context, state) {
+          final product = state.extra as ProductEntity;
+          return ProductDetailScreen(product: product);
+        },
+      ),
+      GoRoute(
+        path: '/products/edit',
+        name: 'edit_product',
+        builder: (context, state) {
+          final product = state.extra as ProductEntity;
+          return EditProductScreen(product: product);
+        },
       ),
     ],
   );

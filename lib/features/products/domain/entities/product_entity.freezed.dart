@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProductEntity {
 
- String get id; String get name; String? get description; String get category; List<VariantEntity> get variants; DateTime? get createdAt;
+ String get id; String get name; String get description; String get category; List<VariantEntity> get variants;
 /// Create a copy of ProductEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $ProductEntityCopyWith<ProductEntity> get copyWith => _$ProductEntityCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.category, category) || other.category == category)&&const DeepCollectionEquality().equals(other.variants, variants)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.category, category) || other.category == category)&&const DeepCollectionEquality().equals(other.variants, variants));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,description,category,const DeepCollectionEquality().hash(variants),createdAt);
+int get hashCode => Object.hash(runtimeType,id,name,description,category,const DeepCollectionEquality().hash(variants));
 
 @override
 String toString() {
-  return 'ProductEntity(id: $id, name: $name, description: $description, category: $category, variants: $variants, createdAt: $createdAt)';
+  return 'ProductEntity(id: $id, name: $name, description: $description, category: $category, variants: $variants)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $ProductEntityCopyWith<$Res>  {
   factory $ProductEntityCopyWith(ProductEntity value, $Res Function(ProductEntity) _then) = _$ProductEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String? description, String category, List<VariantEntity> variants, DateTime? createdAt
+ String id, String name, String description, String category, List<VariantEntity> variants
 });
 
 
@@ -62,15 +62,14 @@ class _$ProductEntityCopyWithImpl<$Res>
 
 /// Create a copy of ProductEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? description = freezed,Object? category = null,Object? variants = null,Object? createdAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? description = null,Object? category = null,Object? variants = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String?,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String,variants: null == variants ? _self.variants : variants // ignore: cast_nullable_to_non_nullable
-as List<VariantEntity>,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,
+as List<VariantEntity>,
   ));
 }
 
@@ -155,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String? description,  String category,  List<VariantEntity> variants,  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String description,  String category,  List<VariantEntity> variants)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProductEntity() when $default != null:
-return $default(_that.id,_that.name,_that.description,_that.category,_that.variants,_that.createdAt);case _:
+return $default(_that.id,_that.name,_that.description,_that.category,_that.variants);case _:
   return orElse();
 
 }
@@ -176,10 +175,10 @@ return $default(_that.id,_that.name,_that.description,_that.category,_that.varia
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String? description,  String category,  List<VariantEntity> variants,  DateTime? createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String description,  String category,  List<VariantEntity> variants)  $default,) {final _that = this;
 switch (_that) {
 case _ProductEntity():
-return $default(_that.id,_that.name,_that.description,_that.category,_that.variants,_that.createdAt);case _:
+return $default(_that.id,_that.name,_that.description,_that.category,_that.variants);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +195,10 @@ return $default(_that.id,_that.name,_that.description,_that.category,_that.varia
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String? description,  String category,  List<VariantEntity> variants,  DateTime? createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String description,  String category,  List<VariantEntity> variants)?  $default,) {final _that = this;
 switch (_that) {
 case _ProductEntity() when $default != null:
-return $default(_that.id,_that.name,_that.description,_that.category,_that.variants,_that.createdAt);case _:
+return $default(_that.id,_that.name,_that.description,_that.category,_that.variants);case _:
   return null;
 
 }
@@ -211,12 +210,12 @@ return $default(_that.id,_that.name,_that.description,_that.category,_that.varia
 
 
 class _ProductEntity implements ProductEntity {
-  const _ProductEntity({required this.id, required this.name, this.description, required this.category, required final  List<VariantEntity> variants, this.createdAt}): _variants = variants;
+  const _ProductEntity({required this.id, required this.name, required this.description, required this.category, required final  List<VariantEntity> variants}): _variants = variants;
   
 
 @override final  String id;
 @override final  String name;
-@override final  String? description;
+@override final  String description;
 @override final  String category;
  final  List<VariantEntity> _variants;
 @override List<VariantEntity> get variants {
@@ -225,7 +224,6 @@ class _ProductEntity implements ProductEntity {
   return EqualUnmodifiableListView(_variants);
 }
 
-@override final  DateTime? createdAt;
 
 /// Create a copy of ProductEntity
 /// with the given fields replaced by the non-null parameter values.
@@ -237,16 +235,16 @@ _$ProductEntityCopyWith<_ProductEntity> get copyWith => __$ProductEntityCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProductEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.category, category) || other.category == category)&&const DeepCollectionEquality().equals(other._variants, _variants)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProductEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.category, category) || other.category == category)&&const DeepCollectionEquality().equals(other._variants, _variants));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,description,category,const DeepCollectionEquality().hash(_variants),createdAt);
+int get hashCode => Object.hash(runtimeType,id,name,description,category,const DeepCollectionEquality().hash(_variants));
 
 @override
 String toString() {
-  return 'ProductEntity(id: $id, name: $name, description: $description, category: $category, variants: $variants, createdAt: $createdAt)';
+  return 'ProductEntity(id: $id, name: $name, description: $description, category: $category, variants: $variants)';
 }
 
 
@@ -257,7 +255,7 @@ abstract mixin class _$ProductEntityCopyWith<$Res> implements $ProductEntityCopy
   factory _$ProductEntityCopyWith(_ProductEntity value, $Res Function(_ProductEntity) _then) = __$ProductEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String? description, String category, List<VariantEntity> variants, DateTime? createdAt
+ String id, String name, String description, String category, List<VariantEntity> variants
 });
 
 
@@ -274,15 +272,14 @@ class __$ProductEntityCopyWithImpl<$Res>
 
 /// Create a copy of ProductEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? description = freezed,Object? category = null,Object? variants = null,Object? createdAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? description = null,Object? category = null,Object? variants = null,}) {
   return _then(_ProductEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String?,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
+as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
+as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String,variants: null == variants ? _self._variants : variants // ignore: cast_nullable_to_non_nullable
-as List<VariantEntity>,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,
+as List<VariantEntity>,
   ));
 }
 
@@ -292,7 +289,7 @@ as DateTime?,
 /// @nodoc
 mixin _$VariantEntity {
 
- String get id; String get name; double get price; int get stock; String? get sku;
+ String get id; String get name; double get price; int get stock; String get sku;
 /// Create a copy of VariantEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -323,7 +320,7 @@ abstract mixin class $VariantEntityCopyWith<$Res>  {
   factory $VariantEntityCopyWith(VariantEntity value, $Res Function(VariantEntity) _then) = _$VariantEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, double price, int stock, String? sku
+ String id, String name, double price, int stock, String sku
 });
 
 
@@ -340,14 +337,14 @@ class _$VariantEntityCopyWithImpl<$Res>
 
 /// Create a copy of VariantEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? price = null,Object? stock = null,Object? sku = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? price = null,Object? stock = null,Object? sku = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,price: null == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
 as double,stock: null == stock ? _self.stock : stock // ignore: cast_nullable_to_non_nullable
-as int,sku: freezed == sku ? _self.sku : sku // ignore: cast_nullable_to_non_nullable
-as String?,
+as int,sku: null == sku ? _self.sku : sku // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
@@ -432,7 +429,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  double price,  int stock,  String? sku)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  double price,  int stock,  String sku)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _VariantEntity() when $default != null:
 return $default(_that.id,_that.name,_that.price,_that.stock,_that.sku);case _:
@@ -453,7 +450,7 @@ return $default(_that.id,_that.name,_that.price,_that.stock,_that.sku);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  double price,  int stock,  String? sku)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  double price,  int stock,  String sku)  $default,) {final _that = this;
 switch (_that) {
 case _VariantEntity():
 return $default(_that.id,_that.name,_that.price,_that.stock,_that.sku);case _:
@@ -473,7 +470,7 @@ return $default(_that.id,_that.name,_that.price,_that.stock,_that.sku);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  double price,  int stock,  String? sku)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  double price,  int stock,  String sku)?  $default,) {final _that = this;
 switch (_that) {
 case _VariantEntity() when $default != null:
 return $default(_that.id,_that.name,_that.price,_that.stock,_that.sku);case _:
@@ -488,14 +485,14 @@ return $default(_that.id,_that.name,_that.price,_that.stock,_that.sku);case _:
 
 
 class _VariantEntity implements VariantEntity {
-  const _VariantEntity({required this.id, required this.name, required this.price, required this.stock, this.sku});
+  const _VariantEntity({required this.id, required this.name, required this.price, required this.stock, required this.sku});
   
 
 @override final  String id;
 @override final  String name;
 @override final  double price;
 @override final  int stock;
-@override final  String? sku;
+@override final  String sku;
 
 /// Create a copy of VariantEntity
 /// with the given fields replaced by the non-null parameter values.
@@ -527,7 +524,7 @@ abstract mixin class _$VariantEntityCopyWith<$Res> implements $VariantEntityCopy
   factory _$VariantEntityCopyWith(_VariantEntity value, $Res Function(_VariantEntity) _then) = __$VariantEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, double price, int stock, String? sku
+ String id, String name, double price, int stock, String sku
 });
 
 
@@ -544,14 +541,14 @@ class __$VariantEntityCopyWithImpl<$Res>
 
 /// Create a copy of VariantEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? price = null,Object? stock = null,Object? sku = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? price = null,Object? stock = null,Object? sku = null,}) {
   return _then(_VariantEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,price: null == price ? _self.price : price // ignore: cast_nullable_to_non_nullable
 as double,stock: null == stock ? _self.stock : stock // ignore: cast_nullable_to_non_nullable
-as int,sku: freezed == sku ? _self.sku : sku // ignore: cast_nullable_to_non_nullable
-as String?,
+as int,sku: null == sku ? _self.sku : sku // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 
