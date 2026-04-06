@@ -26,6 +26,18 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
+  Future<Either<Failure, ProductEntity>> getProduct(String id) async {
+    try {
+      final model = await remoteDataSource.fetchProductById(id);
+      return Right(model.toEntity());
+    } on DioException catch (e) {
+      return Left(
+        Failure(e.response?.data['error'] ?? "Gagal mengambil data produk"),
+      );
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> addProduct(ProductEntity product) async {
     try {
       final data = {

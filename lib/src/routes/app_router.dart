@@ -62,9 +62,6 @@ GoRouter goRouter(Ref ref) {
       return null;
     },
     routes: [
-      // ==========================================
-      // PUBLIC ROUTES (Bisa diakses tanpa login)
-      // ==========================================
       GoRoute(
         path: '/login',
         name: 'login',
@@ -75,10 +72,6 @@ GoRouter goRouter(Ref ref) {
         name: 'register',
         builder: (context, state) => const RegisterScreen(),
       ),
-
-      // ==========================================
-      // AUTH GUARDED ROUTES (Wajib Login)
-      // ==========================================
       GoRoute(
         path: '/dashboard',
         name: 'dashboard',
@@ -95,15 +88,15 @@ GoRouter goRouter(Ref ref) {
         builder: (context, state) => const AddProductScreen(),
       ),
       GoRoute(
-        path: '/products/detail',
+        path: '/products/:id',
         name: 'product_detail',
         builder: (context, state) {
-          final product = state.extra as ProductEntity;
-          return ProductDetailScreen(product: product);
+          final id = state.pathParameters['id']!;
+          return ProductDetailScreen(productId: id);
         },
       ),
       GoRoute(
-        path: '/products/edit',
+        path: '/products/:id/edit',
         name: 'edit_product',
         builder: (context, state) {
           final product = state.extra as ProductEntity;

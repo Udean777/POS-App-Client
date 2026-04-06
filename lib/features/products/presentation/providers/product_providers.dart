@@ -4,6 +4,7 @@ import 'package:client/features/products/data/repositories/product_repository_im
 import 'package:client/features/products/domain/repositories/product_repository.dart';
 import 'package:client/features/products/domain/usecases/add_product_usecase.dart';
 import 'package:client/features/products/domain/usecases/get_products_usecase.dart';
+import 'package:client/features/products/domain/usecases/get_product_usecase.dart';
 import 'package:client/features/products/domain/usecases/update_product_usecase.dart';
 import 'package:client/features/products/domain/usecases/delete_product_usecase.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -26,6 +27,12 @@ ProductRepository productRepository(Ref ref) {
 GetProductsUsecase getProductsUsecase(Ref ref) {
   final repository = ref.watch(productRepositoryProvider);
   return GetProductsUsecase(repository: repository);
+}
+
+@riverpod
+GetProductUsecase getProductUsecase(Ref ref) {
+  final repository = ref.watch(productRepositoryProvider);
+  return GetProductUsecase(repository);
 }
 
 @riverpod
