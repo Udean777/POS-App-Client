@@ -13,6 +13,8 @@ import 'package:client/features/products/presentation/screens/add_product_screen
 import 'package:client/features/products/presentation/screens/edit_product_screen.dart';
 import 'package:client/features/products/presentation/screens/product_detail_screen.dart';
 import 'package:client/features/products/presentation/screens/product_list_screen.dart';
+import 'package:client/features/transaction/presentation/screens/pos_screen.dart';
+import 'package:client/features/transaction/presentation/screens/transaction_history_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -142,6 +144,16 @@ GoRouter goRouter(Ref ref) {
           final product = state.extra as ProductEntity;
           return EditProductScreen(product: product);
         },
+      ),
+      GoRoute(
+        path: '/pos',
+        name: 'pos',
+        builder: (context, state) => const PosScreen(),
+      ),
+      GoRoute(
+        path: '/history',
+        name: 'history',
+        builder: (context, state) => const TransactionHistoryScreen(),
       ),
     ],
   );
