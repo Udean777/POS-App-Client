@@ -4,6 +4,10 @@ import 'package:client/features/auth/presentation/providers/state/auth_state.dar
 import 'package:client/features/auth/presentation/screens/login_screen.dart';
 import 'package:client/features/auth/presentation/screens/register_screen.dart';
 import 'package:client/features/dashboard/presentation/screens/dashboard_screen.dart';
+import 'package:client/features/auth/presentation/screens/profile_screen.dart';
+import 'package:client/features/auth/presentation/screens/staff_list_screen.dart';
+import 'package:client/features/auth/presentation/screens/add_staff_screen.dart';
+import 'package:client/features/main/presentation/screens/main_screen.dart';
 import 'package:client/features/products/domain/entities/product_entity.dart';
 import 'package:client/features/products/presentation/screens/add_product_screen.dart';
 import 'package:client/features/products/presentation/screens/edit_product_screen.dart';
@@ -72,11 +76,47 @@ GoRouter goRouter(Ref ref) {
         name: 'register',
         builder: (context, state) => const RegisterScreen(),
       ),
-      GoRoute(
-        path: '/dashboard',
-        name: 'dashboard',
-        builder: (context, state) => const DashboardScreen(),
+
+      // Main Application Shell (Bottom Navigation)
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return MainScreen(navigationShell: navigationShell);
+        },
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/dashboard',
+                name: 'dashboard',
+                builder: (context, state) => const DashboardScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/profile',
+                name: 'profile',
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
+          ),
+        ],
       ),
+
+      // Auth Management (Owner Only)
+      GoRoute(
+        path: '/staff',
+        name: 'staff',
+        builder: (context, state) => const StaffListScreen(),
+      ),
+      GoRoute(
+        path: '/staff/add',
+        name: 'add_staff',
+        builder: (context, state) => const AddStaffScreen(),
+      ),
+
+      // Product Routes
       GoRoute(
         path: '/products',
         name: 'products',

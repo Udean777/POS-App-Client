@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserModel {
 
- String get id; String get email;@JsonKey(name: 'business_id') String get businessId;
+ String get id; String get email;@JsonKey(name: 'business_id') String get businessId;@JsonKey(name: 'business_name') String get businessName;@JsonKey(name: 'business_type') String get businessType;@JsonKey(name: 'business_address') String get businessAddress; String get role;
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $UserModelCopyWith<UserModel> get copyWith => _$UserModelCopyWithImpl<UserModel>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.businessId, businessId) || other.businessId == businessId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.businessId, businessId) || other.businessId == businessId)&&(identical(other.businessName, businessName) || other.businessName == businessName)&&(identical(other.businessType, businessType) || other.businessType == businessType)&&(identical(other.businessAddress, businessAddress) || other.businessAddress == businessAddress)&&(identical(other.role, role) || other.role == role));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,email,businessId);
+int get hashCode => Object.hash(runtimeType,id,email,businessId,businessName,businessType,businessAddress,role);
 
 @override
 String toString() {
-  return 'UserModel(id: $id, email: $email, businessId: $businessId)';
+  return 'UserModel(id: $id, email: $email, businessId: $businessId, businessName: $businessName, businessType: $businessType, businessAddress: $businessAddress, role: $role)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $UserModelCopyWith<$Res>  {
   factory $UserModelCopyWith(UserModel value, $Res Function(UserModel) _then) = _$UserModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String email,@JsonKey(name: 'business_id') String businessId
+ String id, String email,@JsonKey(name: 'business_id') String businessId,@JsonKey(name: 'business_name') String businessName,@JsonKey(name: 'business_type') String businessType,@JsonKey(name: 'business_address') String businessAddress, String role
 });
 
 
@@ -65,11 +65,15 @@ class _$UserModelCopyWithImpl<$Res>
 
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? email = null,Object? businessId = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? email = null,Object? businessId = null,Object? businessName = null,Object? businessType = null,Object? businessAddress = null,Object? role = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,businessId: null == businessId ? _self.businessId : businessId // ignore: cast_nullable_to_non_nullable
+as String,businessName: null == businessName ? _self.businessName : businessName // ignore: cast_nullable_to_non_nullable
+as String,businessType: null == businessType ? _self.businessType : businessType // ignore: cast_nullable_to_non_nullable
+as String,businessAddress: null == businessAddress ? _self.businessAddress : businessAddress // ignore: cast_nullable_to_non_nullable
+as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -155,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String email, @JsonKey(name: 'business_id')  String businessId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String email, @JsonKey(name: 'business_id')  String businessId, @JsonKey(name: 'business_name')  String businessName, @JsonKey(name: 'business_type')  String businessType, @JsonKey(name: 'business_address')  String businessAddress,  String role)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserModel() when $default != null:
-return $default(_that.id,_that.email,_that.businessId);case _:
+return $default(_that.id,_that.email,_that.businessId,_that.businessName,_that.businessType,_that.businessAddress,_that.role);case _:
   return orElse();
 
 }
@@ -176,10 +180,10 @@ return $default(_that.id,_that.email,_that.businessId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String email, @JsonKey(name: 'business_id')  String businessId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String email, @JsonKey(name: 'business_id')  String businessId, @JsonKey(name: 'business_name')  String businessName, @JsonKey(name: 'business_type')  String businessType, @JsonKey(name: 'business_address')  String businessAddress,  String role)  $default,) {final _that = this;
 switch (_that) {
 case _UserModel():
-return $default(_that.id,_that.email,_that.businessId);case _:
+return $default(_that.id,_that.email,_that.businessId,_that.businessName,_that.businessType,_that.businessAddress,_that.role);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +200,10 @@ return $default(_that.id,_that.email,_that.businessId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String email, @JsonKey(name: 'business_id')  String businessId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String email, @JsonKey(name: 'business_id')  String businessId, @JsonKey(name: 'business_name')  String businessName, @JsonKey(name: 'business_type')  String businessType, @JsonKey(name: 'business_address')  String businessAddress,  String role)?  $default,) {final _that = this;
 switch (_that) {
 case _UserModel() when $default != null:
-return $default(_that.id,_that.email,_that.businessId);case _:
+return $default(_that.id,_that.email,_that.businessId,_that.businessName,_that.businessType,_that.businessAddress,_that.role);case _:
   return null;
 
 }
@@ -211,12 +215,16 @@ return $default(_that.id,_that.email,_that.businessId);case _:
 @JsonSerializable()
 
 class _UserModel implements UserModel {
-  const _UserModel({required this.id, required this.email, @JsonKey(name: 'business_id') required this.businessId});
+  const _UserModel({required this.id, required this.email, @JsonKey(name: 'business_id') required this.businessId, @JsonKey(name: 'business_name') this.businessName = '', @JsonKey(name: 'business_type') this.businessType = '', @JsonKey(name: 'business_address') this.businessAddress = '', this.role = 'UNSET'});
   factory _UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
 
 @override final  String id;
 @override final  String email;
 @override@JsonKey(name: 'business_id') final  String businessId;
+@override@JsonKey(name: 'business_name') final  String businessName;
+@override@JsonKey(name: 'business_type') final  String businessType;
+@override@JsonKey(name: 'business_address') final  String businessAddress;
+@override@JsonKey() final  String role;
 
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +239,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.businessId, businessId) || other.businessId == businessId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.businessId, businessId) || other.businessId == businessId)&&(identical(other.businessName, businessName) || other.businessName == businessName)&&(identical(other.businessType, businessType) || other.businessType == businessType)&&(identical(other.businessAddress, businessAddress) || other.businessAddress == businessAddress)&&(identical(other.role, role) || other.role == role));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,email,businessId);
+int get hashCode => Object.hash(runtimeType,id,email,businessId,businessName,businessType,businessAddress,role);
 
 @override
 String toString() {
-  return 'UserModel(id: $id, email: $email, businessId: $businessId)';
+  return 'UserModel(id: $id, email: $email, businessId: $businessId, businessName: $businessName, businessType: $businessType, businessAddress: $businessAddress, role: $role)';
 }
 
 
@@ -251,7 +259,7 @@ abstract mixin class _$UserModelCopyWith<$Res> implements $UserModelCopyWith<$Re
   factory _$UserModelCopyWith(_UserModel value, $Res Function(_UserModel) _then) = __$UserModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String email,@JsonKey(name: 'business_id') String businessId
+ String id, String email,@JsonKey(name: 'business_id') String businessId,@JsonKey(name: 'business_name') String businessName,@JsonKey(name: 'business_type') String businessType,@JsonKey(name: 'business_address') String businessAddress, String role
 });
 
 
@@ -268,11 +276,15 @@ class __$UserModelCopyWithImpl<$Res>
 
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? email = null,Object? businessId = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? email = null,Object? businessId = null,Object? businessName = null,Object? businessType = null,Object? businessAddress = null,Object? role = null,}) {
   return _then(_UserModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,businessId: null == businessId ? _self.businessId : businessId // ignore: cast_nullable_to_non_nullable
+as String,businessName: null == businessName ? _self.businessName : businessName // ignore: cast_nullable_to_non_nullable
+as String,businessType: null == businessType ? _self.businessType : businessType // ignore: cast_nullable_to_non_nullable
+as String,businessAddress: null == businessAddress ? _self.businessAddress : businessAddress // ignore: cast_nullable_to_non_nullable
+as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

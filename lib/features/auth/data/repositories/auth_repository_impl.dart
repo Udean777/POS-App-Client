@@ -1,6 +1,7 @@
 import 'package:client/core/constants/app_constants.dart';
 import 'package:client/core/errors/failure.dart';
 import 'package:client/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:client/features/auth/data/models/auth_model.dart';
 import 'package:client/features/auth/domain/entities/user_entity.dart';
 import 'package:client/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dio/dio.dart';
@@ -60,13 +61,68 @@ class AuthRepositoryImpl implements AuthRepository {
       }
 
       return Left(Failure(message));
+    } catch (e) {
+      return Left(Failure('Koneksi bermasalah, silakan coba lagi'));
     }
   }
 
+  @override
+  Future<Either<Failure, UserEntity>> getCurrentUser() async {
+    try {
+      final model = await remoteDataSource.fetchProfile();
+      return Right(model.toEntity());
+    } on DioException catch (e) {
+      final dynamic data = e.response?.data;
+      String message = 'Gagal mengambil profil';
+
+      if (data is Map) {
+        message = data['error'] ?? message;
+      }
+
+      return Left(Failure(message));
+    } catch (e) {
+      return Left(Failure('Koneksi bermasalah'));
+    }
+  }
 
   @override
-  Future<Either<Failure, UserEntity>> getCurrentUser() {
-    // TODO: implement getCurrentUse
-    throw UnimplementedError();
+  Future<Either<Failure, void>> createStaff({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      await remoteDataSource.createStaff(email, password);
+      return const Right(null);
+    } on DioException catch (e) {
+      final dynamic data = e.response?.data;
+      String message = 'Gagal mendaftarkan staf';
+
+      if (data is Map) {
+        message = data['error'] ?? message;
+      }
+
+      return Left(Failure(message));
+    } catch (e) {
+      return Left(Failure('Koneksi bermasalah'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<UserEntity>>> getStaff() async {
+    try {
+      final models = await remoteDataSource.fetchStaff();
+      return Right(models.map((e) => e.toEntity()).toList());
+    } on DioException catch (e) {
+      final dynamic data = e.response?.data;
+      String message = 'Gagal mengambil data staf';
+
+      if (data is Map) {
+        message = data['error'] ?? message;
+      }
+
+      return Left(Failure(message));
+    } catch (e) {
+      return Left(Failure('Koneksi bermasalah'));
+    }
   }
 }

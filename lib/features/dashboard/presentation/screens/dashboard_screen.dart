@@ -1,4 +1,4 @@
-import 'package:client/features/auth/presentation/providers/auth_notifier.dart';
+import 'package:client/features/auth/presentation/providers/profile_provider.dart';
 import 'package:client/features/dashboard/presentation/widgets/dashboard_action_card.dart';
 import 'package:client/features/dashboard/presentation/widgets/dashboard_stat_card.dart';
 import 'package:client/features/products/presentation/providers/product_list_notifier.dart';
@@ -11,7 +11,9 @@ class DashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final profileAsync = ref.watch(profileProvider);
     final productState = ref.watch(productListProvider);
+
     final totalProducts = productState.maybeWhen(
       data: (products) => products.length.toString(),
       orElse: () => "0",
@@ -21,7 +23,7 @@ class DashboardScreen extends ConsumerWidget {
       backgroundColor: Colors.grey[50],
       body: CustomScrollView(
         slivers: [
-          // Header dengan Gradient dan Welcome Message
+          // Header dengan Gradient dan Real Business Name
           SliverToBoxAdapter(
             child: Container(
               padding: const EdgeInsets.fromLTRB(24, 60, 24, 32),
@@ -36,40 +38,45 @@ class DashboardScreen extends ConsumerWidget {
                   bottomRight: Radius.circular(32),
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const CircleAvatar(
-                        radius: 24,
-                        backgroundColor: Colors.white24,
-                        child: Icon(Icons.person, color: Colors.white),
-                      ),
-                      IconButton(
-                        onPressed: () => _showLogoutDialog(context, ref),
-                        icon: const Icon(Icons.logout, color: Colors.white),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    "Selamat Datang!",
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 16,
+              child: profileAsync.when(
+                data: (user) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CircleAvatar(
+                          radius: 24,
+                          backgroundColor: Colors.white24,
+                          child: Icon(Icons.person, color: Colors.white),
+                        ),
+                      ],
                     ),
-                  ),
-                  const Text(
-                    "Modal POS Admin",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(height: 24),
+                    const Text(
+                      "Selamat Datang!",
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
+                      ),
                     ),
-                  ),
-                ],
+                    Text(
+                      user.businessName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                loading: () => const Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                ),
+                error: (err, _) => const Text(
+                  "Error loading profile",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ),
@@ -105,81 +112,75 @@ class DashboardScreen extends ConsumerWidget {
           // Menu Navigasi (Grid)
           SliverPadding(
             padding: const EdgeInsets.all(24),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                childAspectRatio: 0.9,
+            sliver: profileAsync.when(
+              data: (user) {
+                final bool isOwner = user.role == "OWNER";
+                
+                return SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 0.9,
+                  ),
+                  delegate: SliverChildListDelegate([
+                    DashboardActionCard(
+                      title: "Produk",
+                      subtitle: "Atur katalog dan stok",
+                      icon: Icons.inventory_2_outlined,
+                      onTap: () => context.pushNamed('products'),
+                    ),
+                    DashboardActionCard(
+                      title: "Transaksi",
+                      subtitle: "Mulai penjualan baru",
+                      icon: Icons.point_of_sale_outlined,
+                      color: Colors.orange,
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Fitur Transaksi segera hadir!")),
+                        );
+                      },
+                    ),
+                    // Hanya tampil jika OWNER
+                    if (isOwner)
+                      DashboardActionCard(
+                        title: "Kelola Staf",
+                        subtitle: "Atur hak akses karyawan",
+                        icon: Icons.people_outline,
+                        color: Colors.teal,
+                        onTap: () => context.pushNamed('staff'),
+                      ),
+                    DashboardActionCard(
+                      title: "Laporan",
+                      subtitle: "Pantau performa toko",
+                      icon: Icons.analytics_outlined,
+                      color: Colors.purple,
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Fitur Laporan segera hadir!")),
+                        );
+                      },
+                    ),
+                    DashboardActionCard(
+                      title: "Pengaturan",
+                      subtitle: "Konfigurasi toko & profil",
+                      icon: Icons.settings_outlined,
+                      color: Colors.grey[700],
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Fitur Pengaturan segera hadir!")),
+                        );
+                      },
+                    ),
+                  ]),
+                );
+              },
+              loading: () => const SliverToBoxAdapter(
+                child: Center(child: CircularProgressIndicator()),
               ),
-              delegate: SliverChildListDelegate([
-                DashboardActionCard(
-                  title: "Produk",
-                  subtitle: "Atur katalog dan stok",
-                  icon: Icons.inventory_2_outlined,
-                  onTap: () => context.pushNamed('products'),
-                ),
-                DashboardActionCard(
-                  title: "Transaksi",
-                  subtitle: "Mulai penjualan baru",
-                  icon: Icons.point_of_sale_outlined,
-                  color: Colors.orange,
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Fitur Transaksi segera hadir!")),
-                    );
-                  },
-                ),
-                DashboardActionCard(
-                  title: "Laporan",
-                  subtitle: "Pantau performa toko",
-                  icon: Icons.analytics_outlined,
-                  color: Colors.purple,
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Fitur Laporan segera hadir!")),
-                    );
-                  },
-                ),
-                DashboardActionCard(
-                  title: "Pengaturan",
-                  subtitle: "Konfigurasi toko & profil",
-                  icon: Icons.settings_outlined,
-                  color: Colors.grey[700],
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Fitur Pengaturan segera hadir!")),
-                    );
-                  },
-                ),
-              ]),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showLogoutDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Logout"),
-        content: const Text("Apakah Anda yakin ingin keluar?"),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Batal"),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ref.read(authNotifierProvider.notifier).logout();
-            },
-            child: const Text(
-              "Keluar",
-              style: TextStyle(color: Colors.red),
+              error: (err, _) => SliverToBoxAdapter(
+                child: Center(child: Text("Error: $err")),
+              ),
             ),
           ),
         ],

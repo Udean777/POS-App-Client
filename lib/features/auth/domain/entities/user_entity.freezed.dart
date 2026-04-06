@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserEntity {
 
- String get id; String get email; String get businessId;
+ String get id; String get email; String get businessId; String get businessName; String get businessType; String get businessAddress; String get role;
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $UserEntityCopyWith<UserEntity> get copyWith => _$UserEntityCopyWithImpl<UserEnt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.businessId, businessId) || other.businessId == businessId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.businessId, businessId) || other.businessId == businessId)&&(identical(other.businessName, businessName) || other.businessName == businessName)&&(identical(other.businessType, businessType) || other.businessType == businessType)&&(identical(other.businessAddress, businessAddress) || other.businessAddress == businessAddress)&&(identical(other.role, role) || other.role == role));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,email,businessId);
+int get hashCode => Object.hash(runtimeType,id,email,businessId,businessName,businessType,businessAddress,role);
 
 @override
 String toString() {
-  return 'UserEntity(id: $id, email: $email, businessId: $businessId)';
+  return 'UserEntity(id: $id, email: $email, businessId: $businessId, businessName: $businessName, businessType: $businessType, businessAddress: $businessAddress, role: $role)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $UserEntityCopyWith<$Res>  {
   factory $UserEntityCopyWith(UserEntity value, $Res Function(UserEntity) _then) = _$UserEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String email, String businessId
+ String id, String email, String businessId, String businessName, String businessType, String businessAddress, String role
 });
 
 
@@ -62,11 +62,15 @@ class _$UserEntityCopyWithImpl<$Res>
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? email = null,Object? businessId = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? email = null,Object? businessId = null,Object? businessName = null,Object? businessType = null,Object? businessAddress = null,Object? role = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,businessId: null == businessId ? _self.businessId : businessId // ignore: cast_nullable_to_non_nullable
+as String,businessName: null == businessName ? _self.businessName : businessName // ignore: cast_nullable_to_non_nullable
+as String,businessType: null == businessType ? _self.businessType : businessType // ignore: cast_nullable_to_non_nullable
+as String,businessAddress: null == businessAddress ? _self.businessAddress : businessAddress // ignore: cast_nullable_to_non_nullable
+as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -152,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String email,  String businessId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String email,  String businessId,  String businessName,  String businessType,  String businessAddress,  String role)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserEntity() when $default != null:
-return $default(_that.id,_that.email,_that.businessId);case _:
+return $default(_that.id,_that.email,_that.businessId,_that.businessName,_that.businessType,_that.businessAddress,_that.role);case _:
   return orElse();
 
 }
@@ -173,10 +177,10 @@ return $default(_that.id,_that.email,_that.businessId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String email,  String businessId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String email,  String businessId,  String businessName,  String businessType,  String businessAddress,  String role)  $default,) {final _that = this;
 switch (_that) {
 case _UserEntity():
-return $default(_that.id,_that.email,_that.businessId);case _:
+return $default(_that.id,_that.email,_that.businessId,_that.businessName,_that.businessType,_that.businessAddress,_that.role);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +197,10 @@ return $default(_that.id,_that.email,_that.businessId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String email,  String businessId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String email,  String businessId,  String businessName,  String businessType,  String businessAddress,  String role)?  $default,) {final _that = this;
 switch (_that) {
 case _UserEntity() when $default != null:
-return $default(_that.id,_that.email,_that.businessId);case _:
+return $default(_that.id,_that.email,_that.businessId,_that.businessName,_that.businessType,_that.businessAddress,_that.role);case _:
   return null;
 
 }
@@ -208,12 +212,16 @@ return $default(_that.id,_that.email,_that.businessId);case _:
 
 
 class _UserEntity extends UserEntity {
-  const _UserEntity({required this.id, required this.email, required this.businessId}): super._();
+  const _UserEntity({required this.id, required this.email, required this.businessId, this.businessName = '', this.businessType = '', this.businessAddress = '', this.role = 'UNSET'}): super._();
   
 
 @override final  String id;
 @override final  String email;
 @override final  String businessId;
+@override@JsonKey() final  String businessName;
+@override@JsonKey() final  String businessType;
+@override@JsonKey() final  String businessAddress;
+@override@JsonKey() final  String role;
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
@@ -225,16 +233,16 @@ _$UserEntityCopyWith<_UserEntity> get copyWith => __$UserEntityCopyWithImpl<_Use
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.businessId, businessId) || other.businessId == businessId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.businessId, businessId) || other.businessId == businessId)&&(identical(other.businessName, businessName) || other.businessName == businessName)&&(identical(other.businessType, businessType) || other.businessType == businessType)&&(identical(other.businessAddress, businessAddress) || other.businessAddress == businessAddress)&&(identical(other.role, role) || other.role == role));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,email,businessId);
+int get hashCode => Object.hash(runtimeType,id,email,businessId,businessName,businessType,businessAddress,role);
 
 @override
 String toString() {
-  return 'UserEntity(id: $id, email: $email, businessId: $businessId)';
+  return 'UserEntity(id: $id, email: $email, businessId: $businessId, businessName: $businessName, businessType: $businessType, businessAddress: $businessAddress, role: $role)';
 }
 
 
@@ -245,7 +253,7 @@ abstract mixin class _$UserEntityCopyWith<$Res> implements $UserEntityCopyWith<$
   factory _$UserEntityCopyWith(_UserEntity value, $Res Function(_UserEntity) _then) = __$UserEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String email, String businessId
+ String id, String email, String businessId, String businessName, String businessType, String businessAddress, String role
 });
 
 
@@ -262,11 +270,15 @@ class __$UserEntityCopyWithImpl<$Res>
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? email = null,Object? businessId = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? email = null,Object? businessId = null,Object? businessName = null,Object? businessType = null,Object? businessAddress = null,Object? role = null,}) {
   return _then(_UserEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,businessId: null == businessId ? _self.businessId : businessId // ignore: cast_nullable_to_non_nullable
+as String,businessName: null == businessName ? _self.businessName : businessName // ignore: cast_nullable_to_non_nullable
+as String,businessType: null == businessType ? _self.businessType : businessType // ignore: cast_nullable_to_non_nullable
+as String,businessAddress: null == businessAddress ? _self.businessAddress : businessAddress // ignore: cast_nullable_to_non_nullable
+as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

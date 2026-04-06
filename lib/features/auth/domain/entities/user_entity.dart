@@ -10,5 +10,9 @@ abstract class UserEntity with _$UserEntity {
     required String id,
     required String email,
     required String businessId,
+    @Default('') String businessName,
+    @Default('') String businessType,
+    @Default('') String businessAddress,
+    @Default('UNSET') String role,
   }) = _UserEntity;
 }

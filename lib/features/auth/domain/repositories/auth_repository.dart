@@ -15,4 +15,11 @@ abstract class AuthRepository {
   });
 
   Future<Either<Failure, UserEntity>> getCurrentUser();
+
+  Future<Either<Failure, void>> createStaff({
+    required String email,
+    required String password,
+  });
+
+  Future<Either<Failure, List<UserEntity>>> getStaff();
 }
