@@ -1,6 +1,7 @@
 import 'package:client/features/auth/presentation/providers/auth_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -41,7 +42,19 @@ class DashboardScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: const Center(child: Text("Selamat Datang di Modal POS!")),
+      body: Column(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.shopping_bag),
+            title: const Text("Manajemen Produk"),
+            subtitle: const Text("Atur katalog dan stok barang"),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              context.pushNamed('products');
+            },
+          ),
+        ],
+      ),
     );
   }
 }

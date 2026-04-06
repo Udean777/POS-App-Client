@@ -4,6 +4,7 @@ import 'package:client/features/auth/presentation/providers/state/auth_state.dar
 import 'package:client/features/auth/presentation/screens/login_screen.dart';
 import 'package:client/features/auth/presentation/screens/register_screen.dart';
 import 'package:client/features/dashboard/presentation/screens/dashboard_screen.dart';
+import 'package:client/features/products/presentation/screens/product_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -73,6 +74,11 @@ GoRouter goRouter(Ref ref) {
         path: '/dashboard',
         name: 'dashboard',
         builder: (context, state) => const DashboardScreen(),
+      ),
+      GoRoute(
+        path: '/products',
+        name: 'products',
+        builder: (context, state) => const ProductListScreen(),
       ),
     ],
   );
