@@ -17,16 +17,20 @@ class StaffListScreen extends ConsumerWidget {
         centerTitle: true,
       ),
       body: staffAsync.when(
-        data: (staff) => staff.isEmpty
-            ? _buildEmptyState(context)
-            : ListView.builder(
-                padding: const EdgeInsets.all(24),
-                itemCount: staff.length,
-                itemBuilder: (context, index) {
-                  final person = staff[index];
-                  return _buildStaffCard(person);
-                },
-              ),
+        data: (staff) => RefreshIndicator(
+          onRefresh: () async => ref.refresh(staffListProvider.future),
+          child: staff.isEmpty
+              ? _buildEmptyState(context)
+              : ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(24),
+                  itemCount: staff.length,
+                  itemBuilder: (context, index) {
+                    final person = staff[index];
+                    return _buildStaffCard(person);
+                  },
+                ),
+        ),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) => Center(child: Text("Gagal mengambil data: $err")),
       ),
@@ -41,18 +45,26 @@ class StaffListScreen extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-            Icon(Icons.people_outline, size: 60, color: Colors.grey[300]),
-            const SizedBox(height: 16),
-            const Text(
-                "Belum ada staf terdaftar",
-                style: TextStyle(color: Colors.grey, fontSize: 16),
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.6,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                  Icon(Icons.people_outline, size: 60, color: Colors.grey[300]),
+                  const SizedBox(height: 16),
+                  const Text(
+                      "Belum ada staf terdaftar",
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                  ),
+              ],
             ),
-        ],
-      ),
+          ),
+        ),
+      ],
     );
   }
 

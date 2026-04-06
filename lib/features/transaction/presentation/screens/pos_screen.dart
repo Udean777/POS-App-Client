@@ -30,12 +30,6 @@ class PosScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text("Transaksi"),
         centerTitle: true,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.history),
@@ -228,7 +222,7 @@ class PosScreen extends ConsumerWidget {
                         horizontal: 24,
                         vertical: 12,
                       ),
-                      minimumSize: Size.zero, 
+                      minimumSize: Size.zero,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

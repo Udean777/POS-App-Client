@@ -39,87 +39,97 @@ class DashboardScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      body: CustomScrollView(
-        slivers: [
-          // Header dan Statistik Ringkas
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 60, bottom: 8),
-              child: StackedStatCarousel(
-                totalProducts: totalProducts,
-                transactionsToday: transactionsToday,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(profileProvider);
+          ref.invalidate(productListProvider);
+          ref.invalidate(transactionListProvider);
+        },
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            // Header dan Statistik Ringkas
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 60, bottom: 8),
+                child: StackedStatCarousel(
+                  totalProducts: totalProducts,
+                  transactionsToday: transactionsToday,
+                ),
               ),
             ),
-          ),
 
-          // Menu Navigasi (Grid)
-          SliverPadding(
-            padding: const EdgeInsets.all(24),
-            sliver: profileAsync.when(
-              data: (user) {
-                final bool isOwner = user.role == "OWNER";
+            // Menu Navigasi (Grid)
+            SliverPadding(
+              padding: const EdgeInsets.all(24),
+              sliver: profileAsync.when(
+                data: (user) {
+                  final bool isOwner = user.role == "OWNER";
 
-                return SliverGrid(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    childAspectRatio: 0.9,
-                  ),
-                  delegate: SliverChildListDelegate([
-                    DashboardActionCard(
-                      title: "Produk",
-                      subtitle: "Atur katalog dan stok",
-                      icon: Icons.inventory_2_outlined,
-                      onTap: () => context.pushNamed('products'),
-                    ),
-                    DashboardActionCard(
-                      title: "Transaksi",
-                      subtitle: "Mulai penjualan baru",
-                      icon: Icons.point_of_sale_outlined,
-                      color: Colors.orange,
-                      onTap: () => context.pushNamed('pos'),
-                    ),
-                    // Hanya tampil jika OWNER
-                    if (isOwner)
+                  return SliverGrid(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: 0.9,
+                        ),
+                    delegate: SliverChildListDelegate([
                       DashboardActionCard(
-                        title: "Kelola Staf",
-                        subtitle: "Atur hak akses karyawan",
-                        icon: Icons.people_outline,
-                        color: Colors.teal,
-                        onTap: () => context.pushNamed('staff'),
+                        title: "Produk",
+                        subtitle: "Atur katalog dan stok",
+                        icon: Icons.inventory_2_outlined,
+                        onTap: () => context.pushNamed('products'),
                       ),
-                    DashboardActionCard(
-                      title: "Riwayat",
-                      subtitle: "Riwayat transaksi",
-                      icon: Icons.history,
-                      color: Colors.blue,
-                      onTap: () => context.pushNamed('history'),
-                    ),
-                    DashboardActionCard(
-                      title: "Pengaturan",
-                      subtitle: "Konfigurasi toko & profil",
-                      icon: Icons.settings_outlined,
-                      color: Colors.grey[700],
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Fitur Pengaturan segera hadir!"),
-                          ),
-                        );
-                      },
-                    ),
-                  ]),
-                );
-              },
-              loading: () => const SliverToBoxAdapter(
-                child: Center(child: CircularProgressIndicator()),
+                      DashboardActionCard(
+                        title: "Transaksi",
+                        subtitle: "Mulai penjualan baru",
+                        icon: Icons.point_of_sale_outlined,
+                        color: Colors.orange,
+                        onTap: () => context.pushNamed('pos'),
+                      ),
+                      // Hanya tampil jika OWNER
+                      if (isOwner)
+                        DashboardActionCard(
+                          title: "Kelola Staf",
+                          subtitle: "Atur hak akses karyawan",
+                          icon: Icons.people_outline,
+                          color: Colors.teal,
+                          onTap: () => context.pushNamed('staff'),
+                        ),
+                      DashboardActionCard(
+                        title: "Riwayat",
+                        subtitle: "Riwayat transaksi",
+                        icon: Icons.history,
+                        color: Colors.blue,
+                        onTap: () => context.pushNamed('history'),
+                      ),
+                      DashboardActionCard(
+                        title: "Pengaturan",
+                        subtitle: "Konfigurasi toko & profil",
+                        icon: Icons.settings_outlined,
+                        color: Colors.grey[700],
+                        onTap: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Fitur Pengaturan segera hadir!"),
+                            ),
+                          );
+                        },
+                      ),
+                    ]),
+                  );
+                },
+                loading: () => const SliverToBoxAdapter(
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                error: (err, _) => SliverToBoxAdapter(
+                  child: Center(child: Text("Error: $err")),
+                ),
               ),
-              error: (err, _) =>
-                  SliverToBoxAdapter(child: Center(child: Text("Error: $err"))),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -45,9 +45,9 @@ class _CheckoutBottomSheetState extends ConsumerState<CheckoutBottomSheet> {
         .read(checkoutProvider.notifier)
         .processCheckout(
           amountPaid: amountPaid,
-          paymentMethod: "CASH", 
+          paymentMethod: "CASH",
           onSuccess: (transaction) {
-            Navigator.pop(context); 
+            Navigator.pop(context);
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
@@ -181,7 +181,7 @@ class _CheckoutBottomSheetState extends ConsumerState<CheckoutBottomSheet> {
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  "Sisa Stok: ${item.variant.stock}",
+                                  "Sisa Stok: ${item.variant.stock - item.quantity}",
                                   style: TextStyle(
                                     color: item.quantity >= item.variant.stock
                                         ? Colors.red
@@ -233,7 +233,7 @@ class _CheckoutBottomSheetState extends ConsumerState<CheckoutBottomSheet> {
                                 ? Colors.grey[300]
                                 : const Color(0xFF6366F1),
                             onPressed: item.quantity >= item.variant.stock
-                                ? null 
+                                ? null
                                 : () => ref
                                       .read(cartProvider.notifier)
                                       .updateQuantity(
