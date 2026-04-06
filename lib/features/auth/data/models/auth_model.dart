@@ -10,17 +10,26 @@ abstract class UserModel with _$UserModel {
     required String id,
     required String email,
     @JsonKey(name: 'business_id') required String businessId,
+    @JsonKey(name: 'business_name') @Default('') String businessName,
+    @JsonKey(name: 'business_type') @Default('') String businessType,
+    @JsonKey(name: 'business_address') @Default('') String businessAddress,
+    @Default('UNSET') String role,
   }) = _UserModel;
 
-  factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
 }
 
 extension UserModelX on UserModel {
   UserEntity toEntity() => UserEntity(
-        id: id,
-        email: email,
-        businessId: businessId,
-      );
+    id: id,
+    email: email,
+    businessId: businessId,
+    businessName: businessName,
+    businessType: businessType,
+    businessAddress: businessAddress,
+    role: role,
+  );
 }
 
 class LoginResponse {

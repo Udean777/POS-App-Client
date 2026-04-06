@@ -4,6 +4,9 @@ import 'package:dio/dio.dart';
 abstract class AuthRemoteDataSource {
   Future<LoginResponse> login(String email, String password);
   Future<void> register(String email, String password, String businessName);
+  Future<UserModel> fetchProfile();
+  Future<void> createStaff(String email, String password);
+  Future<List<UserModel>> fetchStaff();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -34,5 +37,29 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'business_name': businessName,
       },
     );
+  }
+
+  @override
+  Future<UserModel> fetchProfile() async {
+    final response = await _dio.get('/me');
+    return UserModel.fromJson(response.data);
+  }
+
+  @override
+  Future<void> createStaff(String email, String password) async {
+    await _dio.post(
+      '/auth/staff',
+      data: {
+        'email': email,
+        'password': password,
+      },
+    );
+  }
+
+  @override
+  Future<List<UserModel>> fetchStaff() async {
+    final response = await _dio.get('/auth/staff');
+    final List list = response.data;
+    return list.map((e) => UserModel.fromJson(e)).toList();
   }
 }

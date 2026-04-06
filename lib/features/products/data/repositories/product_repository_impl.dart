@@ -26,6 +26,18 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
+  Future<Either<Failure, ProductEntity>> getProduct(String id) async {
+    try {
+      final model = await remoteDataSource.fetchProductById(id);
+      return Right(model.toEntity());
+    } on DioException catch (e) {
+      return Left(
+        Failure(e.response?.data['error'] ?? "Gagal mengambil data produk"),
+      );
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> addProduct(ProductEntity product) async {
     try {
       final data = {
@@ -45,7 +57,6 @@ class ProductRepositoryImpl implements ProductRepository {
       };
 
       await remoteDataSource.addProduct(data);
-
       return const Right(null);
     } on DioException catch (e) {
       return Left(
@@ -55,8 +66,41 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteProduct(String id) {
-    // Implementasi hapus bisa kita buat nanti
-    throw UnimplementedError();
+  Future<Either<Failure, void>> updateProduct(ProductEntity product) async {
+    try {
+      final data = {
+        "name": product.name,
+        "description": product.description,
+        "category": product.category,
+        "variants": product.variants
+            .map(
+              (v) => {
+                "id": v.id,
+                "name": v.name,
+                "price": v.price,
+                "stock": v.stock,
+                "sku": v.sku,
+              },
+            )
+            .toList(),
+      };
+
+      await remoteDataSource.updateProduct(product.id, data);
+      return const Right(null);
+    } on DioException catch (e) {
+      return Left(Failure(e.response?.data['error'] ?? "Gagal update produk"));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteProduct(String id) async {
+    try {
+      await remoteDataSource.deleteProduct(id);
+      return const Right(null);
+    } on DioException catch (e) {
+      return Left(
+        Failure(e.response?.data['error'] ?? "Gagal menghapus produk"),
+      );
+    }
   }
 }

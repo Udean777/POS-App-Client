@@ -3,7 +3,10 @@ import 'package:dio/dio.dart';
 
 abstract class ProductRemoteDataSource {
   Future<List<ProductModel>> fetchProducts();
+  Future<ProductModel> fetchProductById(String id);
   Future<void> addProduct(Map<String, dynamic> productData);
+  Future<void> updateProduct(String id, Map<String, dynamic> productData);
+  Future<void> deleteProduct(String id);
 }
 
 class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
@@ -19,7 +22,26 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   }
 
   @override
+  Future<ProductModel> fetchProductById(String id) async {
+    final response = await _dio.get('/products/$id');
+    return ProductModel.fromJson(response.data);
+  }
+
+  @override
   Future<void> addProduct(Map<String, dynamic> productData) async {
     await _dio.post('/products', data: productData);
+  }
+
+  @override
+  Future<void> updateProduct(
+    String id,
+    Map<String, dynamic> productData,
+  ) async {
+    await _dio.put('/products/$id', data: productData);
+  }
+
+  @override
+  Future<void> deleteProduct(String id) async {
+    await _dio.delete('/products/$id');
   }
 }

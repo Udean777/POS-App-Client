@@ -7,10 +7,9 @@ abstract class ProductEntity with _$ProductEntity {
   const factory ProductEntity({
     required String id,
     required String name,
-    String? description,
+    required String description,
     required String category,
     required List<VariantEntity> variants,
-    DateTime? createdAt,
   }) = _ProductEntity;
 }
 
@@ -21,6 +20,6 @@ abstract class VariantEntity with _$VariantEntity {
     required String name,
     required double price,
     required int stock,
-    String? sku,
+    required String sku,
   }) = _VariantEntity;
 }
