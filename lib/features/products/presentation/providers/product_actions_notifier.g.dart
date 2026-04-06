@@ -41,7 +41,7 @@ final class ProductActionsProvider
   }
 }
 
-String _$productActionsHash() => r'dd812d3e68965032ee65b9903152a1f0f15848e2';
+String _$productActionsHash() => r'dd5377ce5c23941eddf0c16cac2cdec0940a2baf';
 
 abstract class _$ProductActions extends $Notifier<AsyncValue<void>> {
   AsyncValue<void> build();

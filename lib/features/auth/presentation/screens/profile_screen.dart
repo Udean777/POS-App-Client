@@ -1,3 +1,4 @@
+import 'package:client/features/auth/domain/entities/user_entity.dart';
 import 'package:client/features/auth/presentation/providers/auth_notifier.dart';
 import 'package:client/features/auth/presentation/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +13,7 @@ class ProfileScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text("Profil Saya"),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("Profil Saya"), centerTitle: true),
       body: profileAsync.when(
         data: (user) => ListView(
           padding: const EdgeInsets.all(24),
@@ -51,7 +49,10 @@ class ProfileScreen extends ConsumerWidget {
             OutlinedButton.icon(
               onPressed: () => _showLogoutDialog(context, ref),
               icon: const Icon(Icons.logout, color: Colors.red),
-              label: const Text("Keluar Akun", style: TextStyle(color: Colors.red)),
+              label: const Text(
+                "Keluar Akun",
+                style: TextStyle(color: Colors.red),
+              ),
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 60),
                 side: const BorderSide(color: Colors.red),
@@ -68,7 +69,7 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProfileCard(user) {
+  Widget _buildProfileCard(UserEntity user) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -78,7 +79,7 @@ class ProfileScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF6366F1).withOpacity(0.3),
+            color: const Color(0xFF6366F1).withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -130,7 +131,7 @@ class ProfileScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -141,7 +142,7 @@ class ProfileScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFF6366F1).withOpacity(0.1),
+              color: const Color(0xFF6366F1).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: const Color(0xFF6366F1)),

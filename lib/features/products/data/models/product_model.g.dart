@@ -12,6 +12,7 @@ _ProductModel _$ProductModelFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       description: json['description'] as String?,
       category: json['category'] as String,
+      imageUrl: json['image_url'] as String?,
       variants: (json['variants'] as List<dynamic>)
           .map((e) => VariantModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -26,6 +27,7 @@ Map<String, dynamic> _$ProductModelToJson(_ProductModel instance) =>
       'name': instance.name,
       'description': instance.description,
       'category': instance.category,
+      'image_url': instance.imageUrl,
       'variants': instance.variants,
       'created_at': instance.createdAt?.toIso8601String(),
     };

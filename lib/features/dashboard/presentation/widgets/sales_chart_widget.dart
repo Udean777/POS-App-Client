@@ -52,7 +52,7 @@ class SalesChartWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -150,8 +150,8 @@ class SalesChartWidget extends StatelessWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          const Color(0xFF6366F1).withOpacity(0.2),
-                          const Color(0xFF6366F1).withOpacity(0),
+                          const Color(0xFF6366F1).withValues(alpha: 0.2),
+                          const Color(0xFF6366F1).withValues(alpha: 0),
                         ],
                       ),
                     ),

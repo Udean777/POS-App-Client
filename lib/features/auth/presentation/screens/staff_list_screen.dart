@@ -1,3 +1,4 @@
+import 'package:client/features/auth/domain/entities/user_entity.dart';
 import 'package:client/features/auth/presentation/providers/staff_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,10 +13,7 @@ class StaffListScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text("Manajemen Staf"),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("Manajemen Staf"), centerTitle: true),
       body: staffAsync.when(
         data: (staff) => RefreshIndicator(
           onRefresh: () async => ref.refresh(staffListProvider.future),
@@ -54,12 +52,12 @@ class StaffListScreen extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                  Icon(Icons.people_outline, size: 60, color: Colors.grey[300]),
-                  const SizedBox(height: 16),
-                  const Text(
-                      "Belum ada staf terdaftar",
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
-                  ),
+                Icon(Icons.people_outline, size: 60, color: Colors.grey[300]),
+                const SizedBox(height: 16),
+                const Text(
+                  "Belum ada staf terdaftar",
+                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                ),
               ],
             ),
           ),
@@ -68,7 +66,7 @@ class StaffListScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStaffCard(person) {
+  Widget _buildStaffCard(UserEntity person) {
     final bool isOwner = person.role == 'OWNER';
 
     return Container(
@@ -79,7 +77,7 @@ class StaffListScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -89,7 +87,8 @@ class StaffListScreen extends ConsumerWidget {
         children: [
           CircleAvatar(
             radius: 24,
-            backgroundColor: (isOwner ? const Color(0xFF6366F1) : Colors.orange).withOpacity(0.1),
+            backgroundColor: (isOwner ? const Color(0xFF6366F1) : Colors.orange)
+                .withValues(alpha: 0.1),
             child: Icon(
               isOwner ? Icons.admin_panel_settings : Icons.person,
               color: isOwner ? const Color(0xFF6366F1) : Colors.orange,
@@ -102,7 +101,10 @@ class StaffListScreen extends ConsumerWidget {
               children: [
                 Text(
                   person.email,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
                 Text(
                   isOwner ? "Pemilik Toko" : "Kasir / Staf",
@@ -114,7 +116,8 @@ class StaffListScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: (isOwner ? const Color(0xFF6366F1) : Colors.orange).withOpacity(0.1),
+              color: (isOwner ? const Color(0xFF6366F1) : Colors.orange)
+                  .withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(

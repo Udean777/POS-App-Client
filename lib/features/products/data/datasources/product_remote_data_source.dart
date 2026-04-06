@@ -7,6 +7,7 @@ abstract class ProductRemoteDataSource {
   Future<void> addProduct(Map<String, dynamic> productData);
   Future<void> updateProduct(String id, Map<String, dynamic> productData);
   Future<void> deleteProduct(String id);
+  Future<String> uploadImage(String filePath);
 }
 
 class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
@@ -43,5 +44,15 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   @override
   Future<void> deleteProduct(String id) async {
     await _dio.delete('/products/$id');
+  }
+
+  @override
+  Future<String> uploadImage(String filePath) async {
+    final fileName = filePath.split('/').last;
+    final formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(filePath, filename: fileName),
+    });
+    final response = await _dio.post('/products/upload', data: formData);
+    return response.data['url'];
   }
 }

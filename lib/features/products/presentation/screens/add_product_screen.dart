@@ -1,10 +1,13 @@
+import 'dart:io';
 import 'package:client/features/products/domain/entities/product_entity.dart';
 import 'package:client/features/products/presentation/providers/add_product_notifier.dart';
+import 'package:client/features/products/presentation/providers/product_actions_notifier.dart';
 import 'package:client/features/products/presentation/widgets/product_form_section.dart';
 import 'package:client/features/products/presentation/widgets/variant_input_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class AddProductScreen extends ConsumerStatefulWidget {
@@ -20,13 +23,47 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   final _categoryController = TextEditingController();
   final _descController = TextEditingController();
 
-  bool _isMultiVariant = false;
+  XFile? _imageFile;
+  String? _uploadedImageUrl;
+  bool _isUploading = false;
 
+  bool _isMultiVariant = false;
   double _price = 0;
   int _stock = 0;
   String _sku = '';
 
   final List<VariantEntity> _variants = [];
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+      maxWidth: 800,
+    );
+
+    if (image != null) {
+      setState(() {
+        _imageFile = image;
+      });
+      _uploadImage(image.path);
+    }
+  }
+
+  Future<void> _uploadImage(String path) async {
+    setState(() => _isUploading = true);
+
+    final url = await ref
+        .read(productActionsProvider.notifier)
+        .uploadImage(path);
+
+    if (mounted) {
+      setState(() {
+        _uploadedImageUrl = url;
+        _isUploading = false;
+      });
+    }
+  }
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
@@ -57,6 +94,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
       name: _nameController.text,
       description: _descController.text,
       category: _categoryController.text,
+      imageUrl: _uploadedImageUrl,
       variants: finalVariants,
     );
 
@@ -104,6 +142,83 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           children: [
+            // Section 0: Image Picker
+            Center(
+              child: GestureDetector(
+                onTap: _isUploading ? null : _pickImage,
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: const Color(0xFF6366F1).withValues(alpha: 0.2),
+                      width: 2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(22),
+                    child: Stack(
+                      children: [
+                        if (_imageFile != null)
+                          Image.file(
+                            File(_imageFile!.path),
+                            width: 120,
+                            height: 120,
+                            fit: BoxFit.cover,
+                          )
+                        else
+                          Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.add_a_photo_outlined,
+                                  color: const Color(
+                                    0xFF6366F1,
+                                  ).withValues(alpha: 0.5),
+                                  size: 32,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  "Tambah Foto",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: const Color(
+                                      0xFF6366F1,
+                                    ).withValues(alpha: 0.5),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (_isUploading)
+                          Container(
+                            color: Colors.black26,
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 3,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+
             // Section 1: Basic Info
             ProductFormSection(
               title: "Informasi Dasar",
@@ -242,7 +357,7 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, -5),
             ),

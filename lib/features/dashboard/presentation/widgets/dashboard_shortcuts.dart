@@ -28,7 +28,9 @@ class ShortcutItem extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: (color ?? const Color(0xFF6366F1)).withOpacity(0.1),
+                color: (color ?? const Color(0xFF6366F1)).withValues(
+                  alpha: 0.1,
+                ),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:client/core/utils/currency_formatter.dart';
 import 'package:client/features/products/presentation/providers/product_actions_notifier.dart';
 import 'package:client/features/products/presentation/providers/product_detail_provider.dart';
@@ -34,7 +35,7 @@ class ProductDetailScreen extends ConsumerWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
                 SliverAppBar(
-                  expandedHeight: 200,
+                  expandedHeight: 250,
                   pinned: true,
                   stretch: true,
                   flexibleSpace: FlexibleSpaceBar(
@@ -43,25 +44,69 @@ class ProductDetailScreen extends ConsumerWidget {
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
+                        fontSize: 16,
                         shadows: [
-                          Shadow(blurRadius: 10, color: Colors.black45),
+                          Shadow(
+                            blurRadius: 10,
+                            color: Colors.black,
+                            offset: Offset(0, 2),
+                          ),
                         ],
                       ),
                     ),
-                    background: Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomLeft,
-                          colors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
-                        ),
-                      ),
-                      child: Center(
-                        child: Icon(
-                          Icons.inventory_2_outlined,
-                          size: 80,
-                          color: Colors.white.withOpacity(0.2),
-                        ),
+                    background: Hero(
+                      tag: 'product_image_${product.id}',
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          if (product.imageUrl != null &&
+                              product.imageUrl!.isNotEmpty)
+                            CachedNetworkImage(
+                              imageUrl: product.imageUrl!,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                              errorWidget: (context, url, error) => Container(
+                                color: const Color(0xFF6366F1),
+                                child: const Icon(
+                                  Icons.broken_image,
+                                  color: Colors.white,
+                                  size: 48,
+                                ),
+                              ),
+                            )
+                          else
+                            Container(
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topRight,
+                                  end: Alignment.bottomLeft,
+                                  colors: [
+                                    Color(0xFF6366F1),
+                                    Color(0xFF4F46E5),
+                                  ],
+                                ),
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  Icons.inventory_2_outlined,
+                                  size: 80,
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                ),
+                              ),
+                            ),
+                          // Overlay Gradient for text readability
+                          const DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.center,
+                                colors: [Colors.black54, Colors.transparent],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -95,7 +140,9 @@ class ProductDetailScreen extends ConsumerWidget {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF6366F1).withOpacity(0.1),
+                              color: const Color(
+                                0xFF6366F1,
+                              ).withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -262,7 +309,7 @@ class ProductDetailScreen extends ConsumerWidget {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.02),
+                              color: Colors.black.withValues(alpha: 0.02),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -404,6 +451,7 @@ class ProductDetailScreen extends ConsumerWidget {
   }
 
   void _showDeleteDialog(BuildContext context, WidgetRef ref, product) {
+    final navigator = Navigator.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -423,7 +471,7 @@ class ProductDetailScreen extends ConsumerWidget {
               ref
                   .read(productActionsProvider.notifier)
                   .deleteProduct(product.id)
-                  .then((_) => context.pop());
+                  .then((_) => navigator.pop());
             },
             child: const Text("Hapus", style: TextStyle(color: Colors.red)),
           ),
