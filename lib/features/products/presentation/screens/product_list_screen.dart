@@ -2,6 +2,7 @@ import 'package:client/core/utils/currency_formatter.dart';
 import 'package:client/features/products/presentation/providers/product_list_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class ProductListScreen extends ConsumerWidget {
   const ProductListScreen({super.key});
@@ -63,7 +64,7 @@ class ProductListScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigasi ke form tambah produk (nanti kita buat)
+          context.push('/products/add');
         },
         child: const Icon(Icons.add),
       ),

@@ -37,14 +37,18 @@ extension ProductModelX on ProductModel {
   ProductEntity toEntity() => ProductEntity(
     id: id,
     name: name,
-    description: description,
+    description: description ?? '',
     category: category,
     variants: variants.map((v) => v.toEntity()).toList(),
-    createdAt: createdAt,
   );
 }
 
 extension VariantModelX on VariantModel {
-  VariantEntity toEntity() =>
-      VariantEntity(id: id, name: name, price: price, stock: stock, sku: sku);
+  VariantEntity toEntity() => VariantEntity(
+    id: id,
+    name: name,
+    price: price,
+    stock: stock,
+    sku: sku ?? '',
+  );
 }

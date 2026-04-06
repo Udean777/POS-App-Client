@@ -45,7 +45,6 @@ class ProductRepositoryImpl implements ProductRepository {
       };
 
       await remoteDataSource.addProduct(data);
-
       return const Right(null);
     } on DioException catch (e) {
       return Left(
