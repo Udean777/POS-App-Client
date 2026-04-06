@@ -13,16 +13,7 @@ class ProductListScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text("Katalog Produk"),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => ref.read(productListProvider.notifier).refresh(),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text("Katalog Produk"), centerTitle: true),
       body: productState.when(
         data: (products) => products.isEmpty
             ? Center(

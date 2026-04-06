@@ -20,15 +20,12 @@ class _AddProductScreenState extends ConsumerState<AddProductScreen> {
   final _categoryController = TextEditingController();
   final _descController = TextEditingController();
 
-  // Mode: Simple vs Multiple Variants
   bool _isMultiVariant = false;
 
-  // Single variant data (for simple mode)
   double _price = 0;
   int _stock = 0;
   String _sku = '';
 
-  // Multi variant data
   final List<VariantEntity> _variants = [];
 
   void _submit() {

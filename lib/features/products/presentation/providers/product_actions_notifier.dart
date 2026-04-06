@@ -16,13 +16,13 @@ class ProductActions extends _$ProductActions {
 
     final usecase = ref.read(updateProductUsecaseProvider);
     final result = await usecase.execute(product);
+    if (!ref.mounted) return;
 
     result.fold(
       (failure) =>
           state = AsyncValue.error(failure.message, StackTrace.current),
       (_) {
         state = const AsyncValue.data(null);
-        // Refresh list produk agar data di layar katalog terupdate
         ref.read(productListProvider.notifier).refresh();
       },
     );
@@ -34,13 +34,13 @@ class ProductActions extends _$ProductActions {
 
     final usecase = ref.read(deleteProductUsecaseProvider);
     final result = await usecase.execute(id);
+    if (!ref.mounted) return;
 
     result.fold(
       (failure) =>
           state = AsyncValue.error(failure.message, StackTrace.current),
       (_) {
         state = const AsyncValue.data(null);
-        // Refresh list produk setelah berhasil dihapus
         ref.read(productListProvider.notifier).refresh();
       },
     );

@@ -1,5 +1,7 @@
 import 'package:client/features/auth/presentation/providers/profile_provider.dart';
-import 'package:client/features/dashboard/presentation/widgets/dashboard_action_card.dart';
+import 'package:client/features/dashboard/presentation/widgets/dashboard_shortcuts.dart';
+import 'package:client/features/dashboard/presentation/widgets/sales_chart_widget.dart';
+import 'package:client/features/dashboard/presentation/widgets/top_products_widget.dart';
 import 'package:client/features/dashboard/presentation/widgets/stacked_stat_carousel.dart';
 import 'package:client/features/products/presentation/providers/product_list_notifier.dart';
 import 'package:client/features/transaction/presentation/providers/transaction_list_provider.dart';
@@ -59,75 +61,72 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
 
-            // Menu Navigasi (Grid)
-            SliverPadding(
-              padding: const EdgeInsets.all(24),
-              sliver: profileAsync.when(
+            // Menu Cepat (Horizontal)
+            SliverToBoxAdapter(
+              child: profileAsync.when(
                 data: (user) {
                   final bool isOwner = user.role == "OWNER";
-
-                  return SliverGrid(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childAspectRatio: 0.9,
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16, top: 32),
+                    child: DashboardShortcuts(
+                      onMoreTap: () => context.push('/all-menu'),
+                      items: [
+                        ShortcutItem(
+                          title: "Produk",
+                          icon: Icons.inventory_2_outlined,
+                          onTap: () => context.pushNamed('products'),
                         ),
-                    delegate: SliverChildListDelegate([
-                      DashboardActionCard(
-                        title: "Produk",
-                        subtitle: "Atur katalog dan stok",
-                        icon: Icons.inventory_2_outlined,
-                        onTap: () => context.pushNamed('products'),
-                      ),
-                      DashboardActionCard(
-                        title: "Transaksi",
-                        subtitle: "Mulai penjualan baru",
-                        icon: Icons.point_of_sale_outlined,
-                        color: Colors.orange,
-                        onTap: () => context.pushNamed('pos'),
-                      ),
-                      // Hanya tampil jika OWNER
-                      if (isOwner)
-                        DashboardActionCard(
-                          title: "Kelola Staf",
-                          subtitle: "Atur hak akses karyawan",
-                          icon: Icons.people_outline,
-                          color: Colors.teal,
-                          onTap: () => context.pushNamed('staff'),
+                        ShortcutItem(
+                          title: "Transaksi",
+                          icon: Icons.point_of_sale_outlined,
+                          color: Colors.orange,
+                          onTap: () => context.pushNamed('pos'),
                         ),
-                      DashboardActionCard(
-                        title: "Riwayat",
-                        subtitle: "Riwayat transaksi",
-                        icon: Icons.history,
-                        color: Colors.blue,
-                        onTap: () => context.pushNamed('history'),
-                      ),
-                      DashboardActionCard(
-                        title: "Pengaturan",
-                        subtitle: "Konfigurasi toko & profil",
-                        icon: Icons.settings_outlined,
-                        color: Colors.grey[700],
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Fitur Pengaturan segera hadir!"),
-                            ),
-                          );
-                        },
-                      ),
-                    ]),
+                        if (isOwner)
+                          ShortcutItem(
+                            title: "Staf",
+                            icon: Icons.people_outline,
+                            color: Colors.teal,
+                            onTap: () => context.pushNamed('staff'),
+                          ),
+                        ShortcutItem(
+                          title: "Riwayat",
+                          icon: Icons.history,
+                          color: Colors.blue,
+                          onTap: () => context.pushNamed('history'),
+                        ),
+                      ],
+                    ),
                   );
                 },
-                loading: () => const SliverToBoxAdapter(
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-                error: (err, _) => SliverToBoxAdapter(
-                  child: Center(child: Text("Error: $err")),
-                ),
+                loading: () => const SizedBox(height: 100),
+                error: (err, _) => const SizedBox(),
               ),
             ),
+
+            // Sales Chart
+            SliverToBoxAdapter(
+              child: transactionState.when(
+                data: (transactions) =>
+                    SalesChartWidget(transactions: transactions),
+                loading: () => const SizedBox(height: 200),
+                error: (err, _) => const SizedBox(),
+              ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+
+            // Top Products
+            SliverToBoxAdapter(
+              child: transactionState.when(
+                data: (transactions) =>
+                    TopProductsWidget(transactions: transactions),
+                loading: () => const SizedBox(height: 150),
+                error: (err, _) => const SizedBox(),
+              ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 40)),
           ],
         ),
       ),

@@ -7,6 +7,7 @@ import 'package:client/features/dashboard/presentation/screens/dashboard_screen.
 import 'package:client/features/auth/presentation/screens/profile_screen.dart';
 import 'package:client/features/auth/presentation/screens/staff_list_screen.dart';
 import 'package:client/features/auth/presentation/screens/add_staff_screen.dart';
+import 'package:client/features/dashboard/presentation/screens/all_menu_screen.dart';
 import 'package:client/features/main/presentation/screens/main_screen.dart';
 import 'package:client/features/products/domain/entities/product_entity.dart';
 import 'package:client/features/products/presentation/screens/add_product_screen.dart';
@@ -111,6 +112,11 @@ GoRouter goRouter(Ref ref) {
         path: '/staff',
         name: 'staff',
         builder: (context, state) => const StaffListScreen(),
+      ),
+      GoRoute(
+        path: '/all-menu',
+        name: 'all_menu',
+        builder: (context, state) => const AllMenuScreen(),
       ),
       GoRoute(
         path: '/staff/add',

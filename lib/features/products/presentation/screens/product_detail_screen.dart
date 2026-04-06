@@ -1,6 +1,7 @@
 import 'package:client/core/utils/currency_formatter.dart';
 import 'package:client/features/products/presentation/providers/product_actions_notifier.dart';
 import 'package:client/features/products/presentation/providers/product_detail_provider.dart';
+import 'package:client/features/products/domain/entities/product_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -354,6 +355,21 @@ class ProductDetailScreen extends ConsumerWidget {
                                   ),
                                 ],
                               ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.edit_outlined,
+                                  size: 20,
+                                  color: Color(0xFF6366F1),
+                                ),
+                                onPressed: () => _showEditVariantDialog(
+                                  context,
+                                  ref,
+                                  product,
+                                  variant,
+                                  index,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -413,6 +429,181 @@ class ProductDetailScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showEditVariantDialog(
+    BuildContext context,
+    WidgetRef ref,
+    ProductEntity product,
+    VariantEntity variant,
+    int index,
+  ) {
+    final nameCtrl = TextEditingController(text: variant.name);
+    final priceCtrl = TextEditingController(
+      text: variant.price.toInt().toString(),
+    );
+    final stockCtrl = TextEditingController(text: variant.stock.toString());
+    final skuCtrl = TextEditingController(text: variant.sku);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.edit_note, color: Color(0xFF6366F1)),
+            SizedBox(width: 8),
+            Text(
+              "Edit Detail Varian",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+          ],
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildDialogField(
+                controller: nameCtrl,
+                label: "Nama Varian",
+                hint: "Misal: Large, Merah",
+                icon: Icons.label_outline,
+              ),
+              const SizedBox(height: 16),
+              _buildDialogField(
+                controller: skuCtrl,
+                label: "SKU",
+                hint: "Kode unik barang",
+                icon: Icons.qr_code_scanner,
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildDialogField(
+                      controller: priceCtrl,
+                      label: "Harga (Rp)",
+                      hint: "0",
+                      icon: Icons.payments_outlined,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildDialogField(
+                      controller: stockCtrl,
+                      label: "Stok",
+                      hint: "0",
+                      icon: Icons.inventory_2_outlined,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            style: TextButton.styleFrom(foregroundColor: Colors.grey[600]),
+            child: const Text("Batal"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6366F1),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            onPressed: () {
+              final newVariant = variant.copyWith(
+                name: nameCtrl.text,
+                sku: skuCtrl.text,
+                price: double.tryParse(priceCtrl.text) ?? variant.price,
+                stock: int.tryParse(stockCtrl.text) ?? variant.stock,
+              );
+              final newVariants = List<VariantEntity>.from(product.variants);
+              newVariants[index] = newVariant;
+              final newProduct = product.copyWith(variants: newVariants);
+
+              ref
+                  .read(productActionsProvider.notifier)
+                  .updateProduct(newProduct)
+                  .then((_) {
+                    if (ctx.mounted) {
+                      Navigator.pop(ctx);
+                      ref.invalidate(productDetailProvider(product.id));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "Varian ${variant.name} berhasil diperbarui",
+                          ),
+                          backgroundColor: const Color(0xFF10B981),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    }
+                  });
+            },
+            child: const Text(
+              "Simpan",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDialogField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required IconData icon,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller,
+          keyboardType: keyboardType,
+          style: const TextStyle(fontSize: 14),
+          decoration: InputDecoration(
+            hintText: hint,
+            isDense: true,
+            prefixIcon: Icon(icon, size: 20, color: const Color(0xFF6366F1)),
+            filled: true,
+            fillColor: Colors.grey[50],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[200]!),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey[200]!),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFF6366F1)),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
