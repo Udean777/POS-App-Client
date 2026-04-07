@@ -13,6 +13,7 @@ import 'package:client/features/main/presentation/screens/main_screen.dart';
 import 'package:client/features/products/domain/entities/product_entity.dart';
 import 'package:client/features/products/presentation/screens/add_product_screen.dart';
 import 'package:client/features/products/presentation/screens/edit_product_screen.dart';
+import 'package:client/features/products/presentation/screens/manage_stock_screen.dart';
 import 'package:client/features/products/presentation/screens/product_detail_screen.dart';
 import 'package:client/features/products/presentation/screens/product_list_screen.dart';
 import 'package:client/features/transaction/presentation/screens/pos_screen.dart';
@@ -178,6 +179,14 @@ GoRouter goRouter(Ref ref) {
         pageBuilder: (context, state) => AppPageTransitions.slideUp(
           state: state,
           child: const AddProductScreen(),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.manageStock,
+        name: RouteNames.manageStock,
+        pageBuilder: (context, state) => AppPageTransitions.slideRight(
+          state: state,
+          child: const ManageStockScreen(),
         ),
       ),
       GoRoute(

@@ -389,3 +389,45 @@ final class UploadImageUsecaseProvider
 
 String _$uploadImageUsecaseHash() =>
     r'887874a7bafb4c5b81818cfcfb1cbdb1478ed5cd';
+
+@ProviderFor(restockVariantUsecase)
+final restockVariantUsecaseProvider = RestockVariantUsecaseProvider._();
+
+final class RestockVariantUsecaseProvider
+    extends $FunctionalProvider<RestockVariant, RestockVariant, RestockVariant>
+    with $Provider<RestockVariant> {
+  RestockVariantUsecaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'restockVariantUsecaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$restockVariantUsecaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<RestockVariant> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  RestockVariant create(Ref ref) {
+    return restockVariantUsecase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(RestockVariant value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<RestockVariant>(value),
+    );
+  }
+}
+
+String _$restockVariantUsecaseHash() =>
+    r'b6ffc7d4f8d1a9fb94003e04c7488a30eecfdb24';

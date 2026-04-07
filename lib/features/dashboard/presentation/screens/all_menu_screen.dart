@@ -35,9 +35,15 @@ class AllMenuScreen extends ConsumerWidget {
             children: [
               DashboardActionCard(
                 title: "Produk",
-                subtitle: "Atur katalog dan stok",
+                subtitle: "Atur katalog produk",
                 icon: Icons.inventory_2_outlined,
                 onTap: () => context.goNamed('products'),
+              ),
+              DashboardActionCard(
+                title: "Atur Stok",
+                subtitle: "Tambah stok varian",
+                icon: Icons.inventory,
+                onTap: () => context.pushNamed(RouteNames.manageStock),
               ),
               DashboardActionCard(
                 title: "Transaksi",

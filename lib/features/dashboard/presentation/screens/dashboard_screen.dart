@@ -3,6 +3,7 @@ import 'package:client/features/dashboard/presentation/widgets/dashboard_header.
 import 'package:client/features/dashboard/presentation/widgets/dashboard_shortcuts.dart';
 import 'package:client/features/dashboard/presentation/widgets/sales_chart_widget.dart';
 import 'package:client/features/dashboard/presentation/widgets/top_products_widget.dart';
+import 'package:client/features/dashboard/presentation/widgets/low_stock_warning_card.dart';
 import 'package:client/features/products/presentation/providers/product_list_notifier.dart';
 import 'package:client/features/transaction/presentation/providers/transaction_list_provider.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,9 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+            const SliverToBoxAdapter(child: LowStockWarningCard()),
+            
+            const SliverToBoxAdapter(child: SizedBox(height: 12)),
 
             // Menu Cepat (Horizontal)
             SliverToBoxAdapter(

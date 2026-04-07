@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:client/features/auth/domain/entities/user_entity.dart';
 import 'package:client/features/auth/presentation/providers/auth_notifier.dart';
 import 'package:client/features/profile/presentation/providers/profile_provider.dart';
@@ -63,6 +64,12 @@ class ProfileScreen extends ConsumerWidget {
               label: "Alamat",
               value: user.businessAddress.isEmpty ? "-" : user.businessAddress,
             ),
+            _buildInfoTile(
+              context: context,
+              icon: Icons.phone_outlined,
+              label: "Nomor Telepon",
+              value: user.businessPhone.isEmpty ? "-" : user.businessPhone,
+            ),
             const SizedBox(height: 48),
 
             // Logout Button
@@ -87,10 +94,22 @@ class ProfileScreen extends ConsumerWidget {
       borderRadius: 24,
       child: Column(
         children: [
-          const CircleAvatar(
-            radius: 40,
-            backgroundColor: Color(0x3DFFFFFF), // white24
-            child: Icon(Icons.person, size: 40, color: AppColors.card),
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: CircleAvatar(
+              radius: 40,
+              backgroundColor: Colors.white.withValues(alpha: 0.1),
+              backgroundImage: user.businessLogoUrl.isNotEmpty
+                  ? CachedNetworkImageProvider(user.businessLogoUrl)
+                  : null,
+              child: user.businessLogoUrl.isEmpty
+                  ? const Icon(Icons.person, size: 40, color: Colors.white)
+                  : null,
+            ),
           ),
           const SizedBox(height: 16),
           Text(
@@ -101,16 +120,33 @@ class ProfileScreen extends ConsumerWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0x3DFFFFFF), // white24
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(20),
             ),
-            child: Text(
-              user.role,
-              style: const TextStyle(color: AppColors.card, fontSize: 12),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  user.role == "OWNER"
+                      ? Icons.admin_panel_settings
+                      : Icons.badge,
+                  size: 14,
+                  color: Colors.white,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  user.role,
+                  style: const TextStyle(
+                    color: AppColors.card,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

@@ -64,6 +64,23 @@ class ProductActions extends _$ProductActions {
     );
   }
 
+  Future<void> restockVariant(String variantId, int quantity) async {
+    state = const AsyncValue.loading();
+
+    final usecase = ref.read(restockVariantUsecaseProvider);
+    final result = await usecase.call(variantId, quantity); // wait, in usecases it's usually `execute` or `call`. I defined `call`
+    if (!ref.mounted) return;
+
+    result.fold(
+      (failure) =>
+          state = AsyncValue.error(failure.message, StackTrace.current),
+      (_) {
+        state = const AsyncValue.data(null);
+        ref.read(productListProvider.notifier).refresh();
+      },
+    );
+  }
+
   /// Fungsi untuk Upload Gambar
   Future<String?> uploadImage(String filePath) async {
     final usecase = ref.read(uploadImageUsecaseProvider);

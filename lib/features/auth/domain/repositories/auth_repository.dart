@@ -19,6 +19,7 @@ abstract class AuthRepository {
   Future<Either<Failure, void>> createStaff({
     required String email,
     required String password,
+    required String role,
   });
 
   Future<Either<Failure, List<UserEntity>>> getStaff();

@@ -17,6 +17,9 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  String _selectedRole = 'STAFF';
+
+  final List<String> _roles = ['ADMIN', 'KASIR', 'GUDANG', 'STAFF'];
 
   @override
   void dispose() {
@@ -33,6 +36,7 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
         .addStaff(
           email: _emailController.text,
           password: _passwordController.text,
+          role: _selectedRole,
           onSuccess: (message) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -52,8 +56,6 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(staffListProvider).isLoading;
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -109,39 +111,31 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
                 prefixIcon: const Icon(Icons.lock_outline),
                 validator: (v) => v!.length < 6 ? "Minimal 6 karakter" : null,
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 20),
 
-              // Note about roles
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.warningOpaque,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: AppColors.warning.withValues(alpha: 0.2),
-                  ),
+              // Role Selection
+              DropdownButtonFormField<String>(
+                value: _selectedRole,
+                decoration: const InputDecoration(
+                  labelText: "Pilih Role / Jabatan",
+                  prefixIcon: Icon(Icons.badge_outlined),
                 ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.info_outline, color: AppColors.warning),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Text(
-                        "Akun ini otomatis akan didaftarkan sebagai STAFF dengan akses terbatas.",
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: AppColors.warning,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                items: _roles
+                    .map(
+                      (role) =>
+                          DropdownMenuItem(value: role, child: Text(role)),
+                    )
+                    .toList(),
+                onChanged: (v) {
+                  if (v != null) setState(() => _selectedRole = v);
+                },
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 48),
 
               // Submit Button
               AppButton(
                 onPressed: _submit,
-                isLoading: isLoading,
+                isLoading: ref.watch(staffListProvider).isLoading,
                 text: "Simpan Data Staf",
               ),
             ],

@@ -5,7 +5,7 @@ abstract class AuthRemoteDataSource {
   Future<LoginResponse> login(String email, String password);
   Future<void> register(String email, String password, String businessName);
   Future<UserModel> fetchProfile();
-  Future<void> createStaff(String email, String password);
+  Future<void> createStaff(String email, String password, String role);
   Future<List<UserModel>> fetchStaff();
   Future<void> updateBusiness({
     required String name,
@@ -53,13 +53,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> createStaff(String email, String password) async {
+  Future<void> createStaff(String email, String password, String role) async {
     await _dio.post(
       '/auth/staff',
-      data: {
-        'email': email,
-        'password': password,
-      },
+      data: {'email': email, 'password': password, 'role': role},
     );
   }
 
@@ -85,7 +82,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'type': type,
         'address': address,
         'phone': phone,
-        'logo_url':? logoUrl,
+        'logo_url': logoUrl,
       },
     );
   }

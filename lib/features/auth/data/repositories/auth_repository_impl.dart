@@ -89,9 +89,10 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, void>> createStaff({
     required String email,
     required String password,
+    required String role,
   }) async {
     try {
-      await remoteDataSource.createStaff(email, password);
+      await remoteDataSource.createStaff(email, password, role);
       return const Right(null);
     } on DioException catch (e) {
       final dynamic data = e.response?.data;

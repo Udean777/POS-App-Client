@@ -63,6 +63,23 @@ class ProductDetailScreen extends ConsumerWidget {
       expandedHeight: 250,
       pinned: true,
       stretch: true,
+      leading: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: AppColors.shadow.withValues(alpha: 0.4),
+            shape: BoxShape.circle,
+          ),
+          child: IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+            onPressed: () => context.pop(),
+          ),
+        ),
+      ),
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
           product.name,
@@ -128,14 +145,44 @@ class ProductDetailScreen extends ConsumerWidget {
         ),
       ),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.edit, color: Colors.white),
-          onPressed: () =>
-              context.push('/products/${product.id}/edit', extra: product),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.shadow.withValues(alpha: 0.4),
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              icon: const Icon(Icons.edit, color: Colors.white, size: 20),
+              onPressed: () =>
+                  context.push('/products/${product.id}/edit', extra: product),
+            ),
+          ),
         ),
-        IconButton(
-          icon: const Icon(Icons.delete_outline, color: Colors.white),
-          onPressed: () => _showDeleteDialog(context, ref, product),
+        Padding(
+          padding: const EdgeInsets.only(top: 8, bottom: 8, right: 16),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.shadow.withValues(alpha: 0.4),
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              icon: const Icon(
+                Icons.delete_outline,
+                color: Colors.white,
+                size: 20,
+              ),
+              onPressed: () => _showDeleteDialog(context, ref, product),
+            ),
+          ),
         ),
       ],
     );

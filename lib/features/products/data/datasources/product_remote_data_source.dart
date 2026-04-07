@@ -7,6 +7,7 @@ abstract class ProductRemoteDataSource {
   Future<void> addProduct(Map<String, dynamic> productData);
   Future<void> updateProduct(String id, Map<String, dynamic> productData);
   Future<void> deleteProduct(String id);
+  Future<void> restockVariant(String variantId, int quantity);
   Future<String> uploadImage(String filePath);
 }
 
@@ -44,6 +45,14 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   @override
   Future<void> deleteProduct(String id) async {
     await _dio.delete('/products/$id');
+  }
+
+  @override
+  Future<void> restockVariant(String variantId, int quantity) async {
+    await _dio.patch(
+      '/products/variants/$variantId/restock',
+      data: {'quantity': quantity},
+    );
   }
 
   @override

@@ -8,6 +8,7 @@ class RoutePaths {
   static const String allMenu = '/all-menu';
   static const String addStaff = '/staff/add';
   static const String products = '/products';
+  static const String manageStock = '/products/manage-stock';
   static const String addProduct = '/products/add';
   static const String productDetail = '/products/:id';
   static const String editProduct = '/products/:id/edit';
@@ -25,6 +26,7 @@ class RouteNames {
   static const String allMenu = 'all_menu';
   static const String addStaff = 'add_staff';
   static const String products = 'products';
+  static const String manageStock = 'manage_stock';
   static const String addProduct = 'add_product';
   static const String productDetail = 'product_detail';
   static const String editProduct = 'edit_product';

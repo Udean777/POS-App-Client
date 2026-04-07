@@ -19,12 +19,17 @@ class StaffList extends _$StaffList {
   Future<void> addStaff({
     required String email,
     required String password,
+    required String role,
     required Function(String) onSuccess,
     required Function(String) onError,
   }) async {
     state = const AsyncValue.loading();
     final usecase = ref.read(createStaffUsecaseProvider);
-    final result = await usecase.execute(email: email, password: password);
+    final result = await usecase.execute(
+      email: email,
+      password: password,
+      role: role,
+    );
 
     result.fold(
       (failure) {
