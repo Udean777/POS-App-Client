@@ -1,4 +1,5 @@
 import 'package:client/features/dashboard/presentation/widgets/dashboard_stat_card.dart';
+import 'package:client/src/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class StackedStatCarousel extends StatefulWidget {
@@ -142,7 +143,7 @@ class _StackedStatCarouselState extends State<StackedStatCarousel> {
         title: "Total Produk",
         value: widget.totalProducts,
         icon: Icons.inventory_2,
-        color: const Color(0xFF6366F1),
+        color: AppColors.primary,
       ),
     );
   }
@@ -162,7 +163,7 @@ class _StackedStatCarouselState extends State<StackedStatCarousel> {
         title: "Transaksi Hari Ini",
         value: widget.transactionsToday,
         icon: Icons.shopping_cart,
-        color: const Color(0xFF10B981),
+        color: AppColors.success,
       ),
     );
   }

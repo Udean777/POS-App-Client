@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:client/features/auth/presentation/providers/profile_provider.dart';
-import 'package:client/features/auth/presentation/providers/store_config_provider.dart';
+import 'package:client/core/presentation/widgets/app_text_field.dart';
+import 'package:client/core/presentation/widgets/app_button.dart';
+import 'package:client/features/profile/presentation/providers/profile_provider.dart';
+import 'package:client/features/store/presentation/providers/store_config_provider.dart';
 import 'package:client/features/products/presentation/providers/product_actions_notifier.dart';
+import 'package:client/src/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -102,20 +105,29 @@ class _StoreConfigScreenState extends ConsumerState<StoreConfigScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text("Konfigurasi toko berhasil diperbarui"),
-                backgroundColor: Colors.green,
+                backgroundColor: AppColors.success,
               ),
             );
           }
         },
         error: (err, _) => ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(err.toString()), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(err.toString()),
+            backgroundColor: AppColors.danger,
+          ),
         ),
       );
     });
 
     return Scaffold(
-      backgroundColor: colorScheme.surfaceContainerLowest,
-      appBar: AppBar(title: const Text("Konfigurasi Toko"), centerTitle: true),
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        title: Text(
+          "Konfigurasi Toko",
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        centerTitle: true,
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -129,22 +141,22 @@ class _StoreConfigScreenState extends ConsumerState<StoreConfigScreen> {
                     width: 120,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: colorScheme.surface,
-                      borderRadius: BorderRadius.circular(32),
+                      color: AppColors.surfaceVariant,
+                      borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: colorScheme.primary.withValues(alpha: 0.1),
+                        color: AppColors.primaryOpaque,
                         width: 2,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: colorScheme.shadow.withValues(alpha: 0.05),
+                          color: AppColors.shadow.withValues(alpha: 0.05),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
                       ],
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(10),
                       child: _buildLogoPreview(),
                     ),
                   ),
@@ -156,13 +168,13 @@ class _StoreConfigScreenState extends ConsumerState<StoreConfigScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: colorScheme.primary,
+                          color: AppColors.primary,
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 3),
+                          border: Border.all(color: AppColors.card, width: 3),
                         ),
                         child: Icon(
                           _isUploading ? Icons.hourglass_empty : Icons.edit,
-                          color: Colors.white,
+                          color: AppColors.card,
                           size: 20,
                         ),
                       ),
@@ -179,12 +191,10 @@ class _StoreConfigScreenState extends ConsumerState<StoreConfigScreen> {
               icon: Icons.storefront_outlined,
               colorScheme: colorScheme,
               children: [
-                TextFormField(
+                AppTextField(
                   controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: "Nama Toko",
-                    prefixIcon: Icon(Icons.business_outlined),
-                  ),
+                  labelText: "Nama Toko",
+                  prefixIcon: const Icon(Icons.business_outlined),
                   validator: (v) =>
                       v == null || v.isEmpty ? "Nama toko wajib diisi" : null,
                 ),
@@ -215,22 +225,18 @@ class _StoreConfigScreenState extends ConsumerState<StoreConfigScreen> {
               icon: Icons.location_on_outlined,
               colorScheme: colorScheme,
               children: [
-                TextFormField(
+                AppTextField(
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(
-                    labelText: "Nomor Telepon",
-                    prefixIcon: Icon(Icons.phone_outlined),
-                  ),
+                  labelText: "Nomor Telepon",
+                  prefixIcon: const Icon(Icons.phone_outlined),
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
+                AppTextField(
                   controller: _addressController,
                   maxLines: 3,
-                  decoration: const InputDecoration(
-                    labelText: "Alamat Toko",
-                    prefixIcon: Icon(Icons.map_outlined),
-                  ),
+                  labelText: "Alamat Toko",
+                  prefixIcon: const Icon(Icons.map_outlined),
                 ),
               ],
             ),
@@ -240,29 +246,15 @@ class _StoreConfigScreenState extends ConsumerState<StoreConfigScreen> {
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: colorScheme.surface,
-          border: Border(
-            top: BorderSide(color: colorScheme.outlineVariant, width: 1),
-          ),
+        decoration: const BoxDecoration(
+          color: AppColors.card,
+          border: Border(top: BorderSide(color: AppColors.border, width: 1)),
         ),
         child: SafeArea(
-          child: ElevatedButton(
-            onPressed: state.isLoading || _isUploading ? null : _submit,
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 56),
-              elevation: 0,
-            ),
-            child: state.isLoading
-                ? const SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
-                : const Text("Simpan Konfigurasi"),
+          child: AppButton(
+            onPressed: _submit,
+            isLoading: state.isLoading || _isUploading,
+            text: "Simpan Konfigurasi",
           ),
         ),
       ),
@@ -288,11 +280,7 @@ class _StoreConfigScreenState extends ConsumerState<StoreConfigScreen> {
       );
     }
 
-    return Icon(
-      Icons.store_outlined,
-      size: 48,
-      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-    );
+    return Icon(Icons.store_outlined, size: 48, color: AppColors.primaryOpaque);
   }
 
   Widget _buildSection({
@@ -310,11 +298,9 @@ class _StoreConfigScreenState extends ConsumerState<StoreConfigScreen> {
             const SizedBox(width: 8),
             Text(
               title,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: colorScheme.primary,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(color: AppColors.primary),
             ),
           ],
         ),

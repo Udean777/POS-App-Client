@@ -1,6 +1,11 @@
 import 'package:client/core/utils/currency_formatter.dart';
 import 'package:client/features/transaction/presentation/providers/cart_provider.dart';
 import 'package:client/features/transaction/presentation/providers/checkout_provider.dart';
+import 'package:client/core/presentation/widgets/app_button.dart';
+import 'package:client/core/presentation/widgets/app_text_field.dart';
+import 'package:client/core/presentation/widgets/app_dialog.dart';
+import 'package:client/core/presentation/widgets/app_bottom_sheet.dart';
+import 'package:client/src/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:toastification/toastification.dart';
@@ -48,42 +53,11 @@ class _CheckoutBottomSheetState extends ConsumerState<CheckoutBottomSheet> {
           paymentMethod: "CASH",
           onSuccess: (transaction) {
             Navigator.pop(context);
-            showDialog(
+            AppDialogs.showSuccess(
               context: context,
-              builder: (context) => AlertDialog(
-                title: const Center(
-                  child: Icon(
-                    Icons.check_circle,
-                    color: Colors.green,
-                    size: 64,
-                  ),
-                ),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      "Transaksi Berhasil!",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      "Kembalian: ${CurrencyFormatter.toIDR(transaction.change)}",
-                    ),
-                  ],
-                ),
-                actions: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("Tutup"),
-                    ),
-                  ),
-                ],
-              ),
+              title: "Transaksi Berhasil!",
+              message:
+                  "Kembalian: ${CurrencyFormatter.toIDR(transaction.change)}",
             );
           },
           onError: (error) {
@@ -106,15 +80,11 @@ class _CheckoutBottomSheetState extends ConsumerState<CheckoutBottomSheet> {
     final totalTagihan = ref.watch(cartProvider.notifier).getTotalPrice();
     final isLoading = ref.watch(checkoutProvider).isLoading;
 
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+    return AppBottomSheet(
       padding: EdgeInsets.only(
         left: 24,
         right: 24,
-        top: 24,
+        top: 8,
         bottom: MediaQuery.of(context).viewInsets.bottom + 24,
       ),
       child: Column(
@@ -167,13 +137,15 @@ class _CheckoutBottomSheetState extends ConsumerState<CheckoutBottomSheet> {
                                     vertical: 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.grey[200],
+                                    color: AppColors.success.withValues(
+                                      alpha: 0.1,
+                                    ),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
                                     item.variant.name,
                                     style: TextStyle(
-                                      color: Colors.grey[800],
+                                      color: AppColors.success,
                                       fontSize: 10,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -182,22 +154,24 @@ class _CheckoutBottomSheetState extends ConsumerState<CheckoutBottomSheet> {
                                 const SizedBox(width: 6),
                                 Text(
                                   "Sisa Stok: ${item.variant.stock - item.quantity}",
-                                  style: TextStyle(
-                                    color: item.quantity >= item.variant.stock
-                                        ? Colors.red
-                                        : Colors.grey[600],
-                                    fontSize: 11,
-                                  ),
+                                  style: Theme.of(context).textTheme.labelSmall
+                                      ?.copyWith(
+                                        color:
+                                            item.quantity >= item.variant.stock
+                                            ? AppColors.danger
+                                            : AppColors.textSecondary,
+                                      ),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 4),
                             Text(
                               CurrencyFormatter.toIDR(item.variant.price),
-                              style: const TextStyle(
-                                color: Color(0xFF10B981),
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                           ],
                         ),
@@ -206,7 +180,7 @@ class _CheckoutBottomSheetState extends ConsumerState<CheckoutBottomSheet> {
                         children: [
                           IconButton(
                             icon: const Icon(Icons.remove_circle_outline),
-                            color: Colors.red[300],
+                            color: AppColors.danger.withValues(alpha: 0.5),
                             onPressed: () => ref
                                 .read(cartProvider.notifier)
                                 .updateQuantity(item.id, item.quantity - 1),
@@ -217,7 +191,7 @@ class _CheckoutBottomSheetState extends ConsumerState<CheckoutBottomSheet> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]!),
+                              border: Border.all(color: AppColors.border),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -230,8 +204,8 @@ class _CheckoutBottomSheetState extends ConsumerState<CheckoutBottomSheet> {
                           IconButton(
                             icon: const Icon(Icons.add_circle_outline),
                             color: item.quantity >= item.variant.stock
-                                ? Colors.grey[300]
-                                : const Color(0xFF6366F1),
+                                ? AppColors.border
+                                : AppColors.primary,
                             onPressed: item.quantity >= item.variant.stock
                                 ? null
                                 : () => ref
@@ -259,10 +233,9 @@ class _CheckoutBottomSheetState extends ConsumerState<CheckoutBottomSheet> {
               ),
               Text(
                 CurrencyFormatter.toIDR(totalTagihan),
-                style: const TextStyle(
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: Color(0xFF6366F1),
+                  color: AppColors.primary,
                 ),
               ),
             ],
@@ -273,17 +246,13 @@ class _CheckoutBottomSheetState extends ConsumerState<CheckoutBottomSheet> {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           ),
           const SizedBox(height: 8),
-          TextField(
+          AppTextField(
             controller: _amountController,
             keyboardType: TextInputType.number,
             onChanged: (value) => setState(() {}),
-            decoration: InputDecoration(
-              hintText: "Masukkan uang yang diterima",
-              prefixIcon: const Icon(Icons.money),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
+            labelText: "Jumlah Uang",
+            hintText: "Masukkan uang yang diterima",
+            prefixIcon: const Icon(Icons.money),
           ),
 
           Builder(
@@ -305,23 +274,22 @@ class _CheckoutBottomSheetState extends ConsumerState<CheckoutBottomSheet> {
                   children: [
                     Text(
                       kembalian < 0 ? "Sisa Kekurangan" : "Total Kembalian",
-                      style: TextStyle(
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: kembalian < 0
-                            ? Colors.red
-                            : const Color(0xFF10B981),
+                            ? AppColors.danger
+                            : AppColors.success,
                       ),
                     ),
                     Text(
                       CurrencyFormatter.toIDR(
                         kembalian < 0 ? kembalian.abs() : kembalian,
                       ),
-                      style: TextStyle(
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        fontSize: 18,
                         color: kembalian < 0
-                            ? Colors.red
-                            : const Color(0xFF10B981),
+                            ? AppColors.danger
+                            : AppColors.success,
                       ),
                     ),
                   ],
@@ -330,28 +298,10 @@ class _CheckoutBottomSheetState extends ConsumerState<CheckoutBottomSheet> {
             },
           ),
           const SizedBox(height: 24),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6366F1),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            onPressed: isLoading || cartItems.isEmpty
-                ? null
-                : () => _handleCheckout(totalTagihan),
-            child: isLoading
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(color: Colors.white),
-                  )
-                : const Text(
-                    "Proses Pembayaran (CASH)",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
+          AppButton(
+            onPressed: () => _handleCheckout(totalTagihan),
+            isLoading: isLoading || cartItems.isEmpty,
+            text: "Proses Pembayaran (CASH)",
           ),
         ],
       ),

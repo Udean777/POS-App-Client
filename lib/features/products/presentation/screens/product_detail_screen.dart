@@ -1,8 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:client/core/utils/currency_formatter.dart';
+import 'package:client/features/products/domain/entities/product_entity.dart';
 import 'package:client/features/products/presentation/providers/product_actions_notifier.dart';
 import 'package:client/features/products/presentation/providers/product_detail_provider.dart';
-import 'package:client/features/products/domain/entities/product_entity.dart';
+import 'package:client/features/products/presentation/widgets/edit_variant_dialog.dart';
+import 'package:client/features/products/presentation/widgets/product_variant_list_item.dart';
+import 'package:client/core/presentation/widgets/app_button.dart';
+import 'package:client/core/presentation/widgets/app_dialog.dart';
+import 'package:client/src/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +21,7 @@ class ProductDetailScreen extends ConsumerWidget {
     final productAsync = ref.watch(productDetailProvider(productId));
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.background,
       body: productAsync.when(
         data: (product) {
           final totalStock = product.variants.isNotEmpty
@@ -34,624 +39,340 @@ class ProductDetailScreen extends ConsumerWidget {
             child: CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
-                SliverAppBar(
-                  expandedHeight: 250,
-                  pinned: true,
-                  stretch: true,
-                  flexibleSpace: FlexibleSpaceBar(
-                    title: Text(
-                      product.name,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        shadows: [
-                          Shadow(
-                            blurRadius: 10,
-                            color: Colors.black,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                    ),
-                    background: Hero(
-                      tag: 'product_image_${product.id}',
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          if (product.imageUrl != null &&
-                              product.imageUrl!.isNotEmpty)
-                            CachedNetworkImage(
-                              imageUrl: product.imageUrl!,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => const Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                              errorWidget: (context, url, error) => Container(
-                                color: const Color(0xFF6366F1),
-                                child: const Icon(
-                                  Icons.broken_image,
-                                  color: Colors.white,
-                                  size: 48,
-                                ),
-                              ),
-                            )
-                          else
-                            Container(
-                              decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topRight,
-                                  end: Alignment.bottomLeft,
-                                  colors: [
-                                    Color(0xFF6366F1),
-                                    Color(0xFF4F46E5),
-                                  ],
-                                ),
-                              ),
-                              child: Center(
-                                child: Icon(
-                                  Icons.inventory_2_outlined,
-                                  size: 80,
-                                  color: Colors.white.withValues(alpha: 0.2),
-                                ),
-                              ),
-                            ),
-                          // Overlay Gradient for text readability
-                          const DecoratedBox(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.bottomCenter,
-                                end: Alignment.center,
-                                colors: [Colors.black54, Colors.transparent],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  actions: [
-                    IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.white),
-                      onPressed: () => context.push(
-                        '/products/${product.id}/edit',
-                        extra: product,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.delete_outline,
-                        color: Colors.white,
-                      ),
-                      onPressed: () => _showDeleteDialog(context, ref, product),
-                    ),
-                  ],
-                ),
-                // Info Dasar
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(
-                                0xFF6366F1,
-                              ).withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              product.category,
-                              style: const TextStyle(
-                                color: Color(0xFF6366F1),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.grey[200]!),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Column(
-                              children: [
-                                Icon(
-                                  Icons.sell_outlined,
-                                  color: Colors.grey[500],
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "Mulai",
-                                  style: TextStyle(
-                                    color: Colors.grey[500],
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                Text(
-                                  product.variants.isNotEmpty
-                                      ? CurrencyFormatter.toIDR(minPrice)
-                                      : "-",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF10B981),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              width: 1,
-                              height: 40,
-                              color: Colors.grey[200],
-                            ),
-                            Column(
-                              children: [
-                                Icon(
-                                  Icons.inventory_2_outlined,
-                                  color: Colors.grey[500],
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "Total Stok",
-                                  style: TextStyle(
-                                    color: Colors.grey[500],
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                Text(
-                                  "$totalStock",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              width: 1,
-                              height: 40,
-                              color: Colors.grey[200],
-                            ),
-                            Column(
-                              children: [
-                                Icon(
-                                  Icons.layers_outlined,
-                                  color: Colors.grey[500],
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "Varian",
-                                  style: TextStyle(
-                                    color: Colors.grey[500],
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                Text(
-                                  "${product.variants.length}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      const Text(
-                        "Deskripsi Produk",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        product.description.isEmpty
-                            ? "Tidak ada deskripsi."
-                            : product.description,
-                        style: TextStyle(color: Colors.grey[700], height: 1.5),
-                      ),
-                      const SizedBox(height: 32),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            "Pilihan Varian",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            "${product.variants.length} Varian",
-                            style: TextStyle(
-                              color: Colors.grey[500],
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                    ]),
-                  ),
-                ),
-                // Daftar Varian
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final variant = product.variants[index];
-                      final isOutOfStock = variant.stock <= 0;
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: isOutOfStock
-                                ? Colors.red[200]!
-                                : Colors.grey[200]!,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.02),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            variant.name,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 2,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[100],
-                                        borderRadius: BorderRadius.circular(6),
-                                        border: Border.all(
-                                          color: Colors.grey[300]!,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        "SKU: ${variant.sku}",
-                                        style: TextStyle(
-                                          color: Colors.grey[700],
-                                          fontSize: 11,
-                                          fontFamily: 'monospace',
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    CurrencyFormatter.toIDR(variant.price),
-                                    style: const TextStyle(
-                                      color: Color(0xFF10B981),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: isOutOfStock
-                                          ? Colors.red[50]
-                                          : Colors.green[50],
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      isOutOfStock
-                                          ? "Stok Habis"
-                                          : "Sisa: ${variant.stock}",
-                                      style: TextStyle(
-                                        color: isOutOfStock
-                                            ? Colors.red[600]
-                                            : Colors.green[700],
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(width: 8),
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.edit_outlined,
-                                  size: 20,
-                                  color: Color(0xFF6366F1),
-                                ),
-                                onPressed: () => _showEditVariantDialog(
-                                  context,
-                                  ref,
-                                  product,
-                                  variant,
-                                  index,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }, childCount: product.variants.length),
-                  ),
-                ),
+                _buildSliverAppBar(context, ref, product),
+                _buildProductInfo(context, product, totalStock, minPrice),
+                _buildVariantList(context, ref, product),
               ],
             ),
           );
         },
         loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFF6366F1)),
+          child: CircularProgressIndicator(color: AppColors.primary),
         ),
-        error: (err, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+        error: (err, stack) => _buildErrorState(ref, err),
+      ),
+    );
+  }
+
+  Widget _buildSliverAppBar(
+    BuildContext context,
+    WidgetRef ref,
+    ProductEntity product,
+  ) {
+    return SliverAppBar(
+      expandedHeight: 250,
+      pinned: true,
+      stretch: true,
+      flexibleSpace: FlexibleSpaceBar(
+        title: Text(
+          product.name,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: Colors.white,
+            shadows: [
+              Shadow(
+                blurRadius: 10,
+                color: AppColors.shadow.withValues(alpha: 0.5),
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+        ),
+        background: Hero(
+          tag: 'product_image_${product.id}',
+          child: Stack(
+            fit: StackFit.expand,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
-              Text("Error: $err", textAlign: TextAlign.center),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () => ref.refresh(productDetailProvider(productId)),
-                child: const Text("Coba Lagi"),
+              if (product.imageUrl != null && product.imageUrl!.isNotEmpty)
+                CachedNetworkImage(
+                  imageUrl: product.imageUrl!,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) =>
+                      const Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => Container(
+                    color: AppColors.primary,
+                    child: const Icon(
+                      Icons.broken_image,
+                      color: Colors.white,
+                      size: 48,
+                    ),
+                  ),
+                )
+              else
+                Container(
+                  decoration: const BoxDecoration(
+                    gradient: AppGradients.primary,
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.inventory_2_outlined,
+                      size: 80,
+                      color: Colors.white.withValues(alpha: 0.2),
+                    ),
+                  ),
+                ),
+              // Overlay Gradient for text readability
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.center,
+                    colors: [
+                      AppColors.shadow.withValues(alpha: 0.5),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
         ),
       ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.edit, color: Colors.white),
+          onPressed: () =>
+              context.push('/products/${product.id}/edit', extra: product),
+        ),
+        IconButton(
+          icon: const Icon(Icons.delete_outline, color: Colors.white),
+          onPressed: () => _showDeleteDialog(context, ref, product),
+        ),
+      ],
     );
   }
 
-  void _showDeleteDialog(BuildContext context, WidgetRef ref, product) {
-    final navigator = Navigator.of(context);
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text("Hapus Produk"),
-        content: Text(
-          "Yakin ingin menghapus ${product.name}? Tindakan ini tidak bisa dibatalkan.",
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text("Batal"),
+  Widget _buildProductInfo(
+    BuildContext context,
+    ProductEntity product,
+    int totalStock,
+    double minPrice,
+  ) {
+    return SliverPadding(
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate([
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryOpaque,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  product.category,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              ref
-                  .read(productActionsProvider.notifier)
-                  .deleteProduct(product.id)
-                  .then((_) => navigator.pop());
-            },
-            child: const Text("Hapus", style: TextStyle(color: Colors.red)),
+          const SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.card,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildSummaryStat(
+                  context,
+                  Icons.sell_outlined,
+                  "Mulai",
+                  product.variants.isNotEmpty
+                      ? CurrencyFormatter.toIDR(minPrice)
+                      : "-",
+                  isPrice: true,
+                ),
+                Container(width: 1, height: 40, color: AppColors.border),
+                _buildSummaryStat(
+                  context,
+                  Icons.inventory_2_outlined,
+                  "Total Stok",
+                  "$totalStock",
+                ),
+                Container(width: 1, height: 40, color: AppColors.border),
+                _buildSummaryStat(
+                  context,
+                  Icons.layers_outlined,
+                  "Varian",
+                  "${product.variants.length}",
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            "Deskripsi Produk",
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            product.description.isEmpty
+                ? "Tidak ada deskripsi."
+                : product.description,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: AppColors.textBody,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 32),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Pilihan Varian",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              Text(
+                "${product.variants.length} Varian",
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+        ]),
+      ),
+    );
+  }
+
+  Widget _buildSummaryStat(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value, {
+    bool isPrice = false,
+  }) {
+    return Column(
+      children: [
+        Icon(icon, color: AppColors.textLight),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: Theme.of(
+            context,
+          ).textTheme.labelSmall?.copyWith(color: AppColors.textSecondary),
+        ),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: isPrice ? AppColors.success : AppColors.textHeadline,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildVariantList(
+    BuildContext context,
+    WidgetRef ref,
+    ProductEntity product,
+  ) {
+    return SliverPadding(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final variant = product.variants[index];
+          return ProductVariantListItem(
+            variant: variant,
+            onEdit: () =>
+                _handleVariantEdit(context, ref, product, variant, index),
+          );
+        }, childCount: product.variants.length),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(WidgetRef ref, Object err) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error_outline, size: 64, color: AppColors.danger),
+          const SizedBox(height: 16),
+          Text("Error: $err", textAlign: TextAlign.center),
+          const SizedBox(height: 24),
+          AppButton(
+            isFullWidth: false,
+            onPressed: () => ref.refresh(productDetailProvider(productId)),
+            text: "Coba Lagi",
           ),
         ],
       ),
     );
   }
 
-  void _showEditVariantDialog(
+  void _showDeleteDialog(
+    BuildContext context,
+    WidgetRef ref,
+    ProductEntity product,
+  ) {
+    AppDialogs.showConfirm(
+      context: context,
+      title: "Hapus Produk",
+      message: "Apakah Anda yakin ingin menghapus produk ini?",
+      confirmText: "Hapus",
+      isDanger: true,
+    ).then((confirmed) {
+      if (confirmed == true) {
+        ref
+            .read(productActionsProvider.notifier)
+            .deleteProduct(product.id)
+            .then((_) {
+              if (context.mounted) {
+                context.pop();
+              }
+            });
+      }
+    });
+  }
+
+  void _handleVariantEdit(
     BuildContext context,
     WidgetRef ref,
     ProductEntity product,
     VariantEntity variant,
     int index,
   ) {
-    final nameCtrl = TextEditingController(text: variant.name);
-    final priceCtrl = TextEditingController(
-      text: variant.price.toInt().toString(),
-    );
-    final stockCtrl = TextEditingController(text: variant.stock.toString());
-    final skuCtrl = TextEditingController(text: variant.sku);
-
-    showDialog(
+    AppDialogs.show(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.edit_note, color: Color(0xFF6366F1)),
-            SizedBox(width: 8),
-            Text(
-              "Edit Detail Varian",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-          ],
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildDialogField(
-                controller: nameCtrl,
-                label: "Nama Varian",
-                hint: "Misal: Large, Merah",
-                icon: Icons.label_outline,
-              ),
-              const SizedBox(height: 16),
-              _buildDialogField(
-                controller: skuCtrl,
-                label: "SKU",
-                hint: "Kode unik barang",
-                icon: Icons.qr_code_scanner,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildDialogField(
-                      controller: priceCtrl,
-                      label: "Harga (Rp)",
-                      hint: "0",
-                      icon: Icons.payments_outlined,
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _buildDialogField(
-                      controller: stockCtrl,
-                      label: "Stok",
-                      hint: "0",
-                      icon: Icons.inventory_2_outlined,
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            style: TextButton.styleFrom(foregroundColor: Colors.grey[600]),
-            child: const Text("Batal"),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6366F1),
-              foregroundColor: Colors.white,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            onPressed: () {
-              final newVariant = variant.copyWith(
-                name: nameCtrl.text,
-                sku: skuCtrl.text,
-                price: double.tryParse(priceCtrl.text) ?? variant.price,
-                stock: int.tryParse(stockCtrl.text) ?? variant.stock,
-              );
-              final newVariants = List<VariantEntity>.from(product.variants);
-              newVariants[index] = newVariant;
-              final newProduct = product.copyWith(variants: newVariants);
+      child: EditVariantDialog(
+        variant: variant,
+        onSave: (newVariant) {
+          final newVariants = List<VariantEntity>.from(product.variants);
+          newVariants[index] = newVariant;
+          final newProduct = product.copyWith(variants: newVariants);
 
-              ref
-                  .read(productActionsProvider.notifier)
-                  .updateProduct(newProduct)
-                  .then((_) {
-                    if (ctx.mounted) {
-                      Navigator.pop(ctx);
-                      ref.invalidate(productDetailProvider(product.id));
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            "Varian ${variant.name} berhasil diperbarui",
-                          ),
-                          backgroundColor: const Color(0xFF10B981),
-                          behavior: SnackBarBehavior.floating,
-                        ),
-                      );
-                    }
-                  });
-            },
-            child: const Text(
-              "Simpan",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
+          ref
+              .read(productActionsProvider.notifier)
+              .updateProduct(newProduct)
+              .then((_) {
+                if (context.mounted) {
+                  ref.invalidate(productDetailProvider(product.id));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        "Varian ${variant.name} berhasil diperbarui",
+                      ),
+                      backgroundColor: AppColors.success,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              });
+        },
       ),
-    );
-  }
-
-  Widget _buildDialogField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required IconData icon,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey,
-          ),
-        ),
-        const SizedBox(height: 6),
-        TextField(
-          controller: controller,
-          keyboardType: keyboardType,
-          style: const TextStyle(fontSize: 14),
-          decoration: InputDecoration(
-            hintText: hint,
-            isDense: true,
-            prefixIcon: Icon(icon, size: 20, color: const Color(0xFF6366F1)),
-            filled: true,
-            fillColor: Colors.grey[50],
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey[200]!),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey[200]!),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF6366F1)),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

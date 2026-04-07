@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:client/features/transaction/domain/entities/transaction_entity.dart';
 import 'package:client/core/utils/currency_formatter.dart';
+import 'package:client/core/presentation/widgets/app_card.dart';
+import 'package:client/src/theme/app_theme.dart';
 
 class TopProductsWidget extends StatelessWidget {
   final List<TransactionEntity> transactions;
@@ -40,34 +42,20 @@ class TopProductsWidget extends StatelessWidget {
       return const SizedBox();
     }
 
-    return Container(
+    return AppCard(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 "Produk Terlaris",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
-              Icon(
-                Icons.trending_up,
-                color: const Color(0xFF10B981).withValues(alpha: 0.5),
-              ),
+              const Icon(Icons.trending_up, color: AppColors.success),
             ],
           ),
           const SizedBox(height: 24),
@@ -84,14 +72,14 @@ class TopProductsWidget extends StatelessWidget {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF6366F1).withValues(alpha: 0.1),
+                      color: AppColors.primaryOpaque,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Center(
                       child: Text(
                         "#${index + 1}",
-                        style: const TextStyle(
-                          color: Color(0xFF6366F1),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -104,16 +92,13 @@ class TopProductsWidget extends StatelessWidget {
                       children: [
                         Text(
                           product.name,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: Theme.of(context).textTheme.titleSmall,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
                           product.variant,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[500],
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
                     ),
@@ -123,16 +108,14 @@ class TopProductsWidget extends StatelessWidget {
                     children: [
                       Text(
                         "${product.quantity} Terjual",
-                        style: const TextStyle(
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          fontSize: 13,
                         ),
                       ),
                       Text(
                         CurrencyFormatter.toIDR(product.revenue),
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: Color(0xFF10B981),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppColors.success,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

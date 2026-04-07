@@ -85,7 +85,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'type': type,
         'address': address,
         'phone': phone,
-        if (logoUrl != null) 'logo_url': logoUrl,
+        'logo_url':? logoUrl,
       },
     );
   }

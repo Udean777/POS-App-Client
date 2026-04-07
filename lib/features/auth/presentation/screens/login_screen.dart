@@ -1,8 +1,12 @@
 import 'package:client/features/auth/presentation/providers/auth_notifier.dart';
 import 'package:client/features/auth/presentation/providers/state/auth_state.dart';
+import 'package:client/core/presentation/widgets/app_text_field.dart';
+import 'package:client/core/presentation/widgets/app_button.dart';
+import 'package:client/core/presentation/widgets/app_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:client/src/theme/app_theme.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -28,20 +32,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       next.maybeWhen(
         authenticated: () {
           context.goNamed('dashboard');
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Login Berhasil!')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Login Berhasil!'),
+              backgroundColor: AppColors.success,
+            ),
+          );
         },
         error: (message) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(message),
-              backgroundColor: Colors.redAccent,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
+            SnackBar(content: Text(message), backgroundColor: AppColors.danger),
           );
         },
         orElse: () {},
@@ -51,7 +51,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final state = ref.watch(authNotifierProvider);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -61,18 +61,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Logo & Header
-                Container(
+                AppCard(
                   padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).primaryColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Icon(
+                  color: AppColors.primaryOpaque,
+                  boxShadow: const [], // No shadow for the logo box
+                  child: const Icon(
                     Icons.account_balance_wallet_rounded,
                     size: 48,
-                    color: Theme.of(context).primaryColor,
+                    color: AppColors.primary,
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -80,80 +76,58 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   "Selamat Datang!",
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: AppColors.textHeadline,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   "Masuk untuk mengelola bisnis Anda dengan Modal POS",
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                 ),
                 const SizedBox(height: 48),
 
                 // Form
-                TextField(
+                AppTextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'Email Bisnis',
-                    hintText: 'admin@toko.com',
-                    prefixIcon: Icon(Icons.email_outlined),
-                  ),
+                  labelText: 'Email Bisnis',
+                  hintText: 'admin@toko.com',
+                  prefixIcon: const Icon(Icons.email_outlined),
                 ),
                 const SizedBox(height: 20),
-                TextField(
+                AppTextField(
                   controller: _passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                    hintText: '••••••••',
-                    prefixIcon: Icon(Icons.lock_outlined),
-                  ),
+                  isPassword: true,
+                  labelText: 'Password',
+                  hintText: '••••••••',
+                  prefixIcon: const Icon(Icons.lock_outlined),
                 ),
                 const SizedBox(height: 12),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: TextButton(
+                  child: AppTextButton(
                     onPressed: () {
                       // Handle forgot password
                     },
-                    child: Text(
-                      "Lupa Password?",
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    text: "Lupa Password?",
                   ),
                 ),
                 const SizedBox(height: 32),
 
                 // Login Button
-                ElevatedButton(
-                  onPressed: state.maybeWhen(
-                    loading: () => null,
-                    orElse: () => () {
-                      ref
-                          .read(authNotifierProvider.notifier)
-                          .login(
-                            _emailController.text,
-                            _passwordController.text,
-                          );
-                    },
+                AppButton(
+                  text: 'Masuk Sekarang',
+                  isLoading: state.maybeWhen(
+                    loading: () => true,
+                    orElse: () => false,
                   ),
-                  child: state.maybeWhen(
-                    loading: () => const SizedBox(
-                      height: 24,
-                      width: 24,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    ),
-                    orElse: () => const Text('Masuk Sekarang'),
-                  ),
+                  onPressed: () {
+                    ref
+                        .read(authNotifierProvider.notifier)
+                        .login(_emailController.text, _passwordController.text);
+                  },
                 ),
                 const SizedBox(height: 24),
 
@@ -163,17 +137,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   children: [
                     Text(
                       "Belum punya akun?",
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                    TextButton(
-                      onPressed: () => context.goNamed('register'),
-                      child: Text(
-                        "Daftar UMKM",
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
                       ),
+                    ),
+                    AppTextButton(
+                      onPressed: () => context.goNamed('register'),
+                      text: "Daftar UMKM",
+                      fontWeight: FontWeight.bold,
                     ),
                   ],
                 ),

@@ -1,5 +1,7 @@
-import 'package:client/features/auth/presentation/providers/profile_provider.dart';
+import 'package:client/features/profile/presentation/providers/profile_provider.dart';
 import 'package:client/features/dashboard/presentation/widgets/dashboard_action_card.dart';
+import 'package:client/src/theme/app_theme.dart';
+import 'package:client/core/constants/route_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,8 +14,11 @@ class AllMenuScreen extends ConsumerWidget {
     final profileAsync = ref.watch(profileProvider);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(title: const Text("Semua Menu"), centerTitle: true),
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        title: Text("Semua Menu", style: Theme.of(context).textTheme.titleLarge),
+        centerTitle: true,
+      ),
       body: profileAsync.when(
         data: (user) {
           final bool isOwner = user.role == "OWNER";
@@ -35,7 +40,7 @@ class AllMenuScreen extends ConsumerWidget {
                 title: "Transaksi",
                 subtitle: "Mulai penjualan baru",
                 icon: Icons.point_of_sale_outlined,
-                color: Colors.orange,
+                color: AppColors.warning,
                 onTap: () => context.pushNamed('pos'),
               ),
               if (isOwner)
@@ -43,28 +48,22 @@ class AllMenuScreen extends ConsumerWidget {
                   title: "Kelola Staf",
                   subtitle: "Atur hak akses karyawan",
                   icon: Icons.people_outline,
-                  color: Colors.teal,
+                  color: AppColors.success,
                   onTap: () => context.pushNamed('staff'),
                 ),
               DashboardActionCard(
                 title: "Riwayat",
                 subtitle: "Riwayat transaksi",
                 icon: Icons.history,
-                color: Colors.blue,
+                color: AppColors.info,
                 onTap: () => context.pushNamed('history'),
               ),
               DashboardActionCard(
                 title: "Pengaturan",
                 subtitle: "Konfigurasi toko & profil",
                 icon: Icons.settings_outlined,
-                color: Colors.grey[700],
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Fitur Pengaturan segera hadir!"),
-                    ),
-                  );
-                },
+                color: AppColors.textSecondary,
+                onTap: () => context.pushNamed(RouteNames.storeConfig),
               ),
             ],
           );

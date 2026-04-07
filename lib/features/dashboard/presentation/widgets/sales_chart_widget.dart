@@ -2,6 +2,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:client/features/transaction/domain/entities/transaction_entity.dart';
+import 'package:client/core/presentation/widgets/app_card.dart';
+import 'package:client/src/theme/app_theme.dart';
 
 class SalesChartWidget extends StatelessWidget {
   final List<TransactionEntity> transactions;
@@ -44,33 +46,22 @@ class SalesChartWidget extends StatelessWidget {
     }
     maxY = maxY == 0 ? 1000 : maxY * 1.2;
 
-    return Container(
+    return AppCard(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 "Tren Penjualan",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
               Text(
                 "7 Hari Terakhir",
-                style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                style: Theme.of(context).textTheme.bodySmall,
               ),
             ],
           ),
@@ -83,7 +74,7 @@ class SalesChartWidget extends StatelessWidget {
                   show: true,
                   drawVerticalLine: false,
                   getDrawingHorizontalLine: (value) =>
-                      FlLine(color: Colors.grey[100], strokeWidth: 1),
+                      FlLine(color: AppColors.surfaceVariant, strokeWidth: 1),
                 ),
                 titlesData: FlTitlesData(
                   show: true,
@@ -111,11 +102,9 @@ class SalesChartWidget extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 10),
                           child: Text(
                             DateFormat('E').format(date),
-                            style: TextStyle(
-                              color: Colors.grey[400],
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                         );
                       },
@@ -131,7 +120,7 @@ class SalesChartWidget extends StatelessWidget {
                   LineChartBarData(
                     spots: spots,
                     isCurved: true,
-                    color: const Color(0xFF6366F1),
+                    color: AppColors.primary,
                     barWidth: 4,
                     isStrokeCapRound: true,
                     dotData: FlDotData(
@@ -139,9 +128,9 @@ class SalesChartWidget extends StatelessWidget {
                       getDotPainter: (spot, percent, barData, index) =>
                           FlDotCirclePainter(
                             radius: 4,
-                            color: Colors.white,
+                            color: AppColors.card,
                             strokeWidth: 3,
-                            strokeColor: const Color(0xFF6366F1),
+                            strokeColor: AppColors.primary,
                           ),
                     ),
                     belowBarData: BarAreaData(
@@ -150,8 +139,8 @@ class SalesChartWidget extends StatelessWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          const Color(0xFF6366F1).withValues(alpha: 0.2),
-                          const Color(0xFF6366F1).withValues(alpha: 0),
+                          AppColors.primary.withValues(alpha: 0.2),
+                          AppColors.primary.withValues(alpha: 0),
                         ],
                       ),
                     ),

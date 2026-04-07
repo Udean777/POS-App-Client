@@ -1,4 +1,4 @@
-import 'package:client/features/auth/presentation/providers/profile_provider.dart';
+import 'package:client/features/profile/presentation/providers/profile_provider.dart';
 import 'package:client/features/dashboard/presentation/widgets/dashboard_shortcuts.dart';
 import 'package:client/features/dashboard/presentation/widgets/sales_chart_widget.dart';
 import 'package:client/features/dashboard/presentation/widgets/top_products_widget.dart';

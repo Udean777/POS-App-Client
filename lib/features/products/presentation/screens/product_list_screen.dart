@@ -1,6 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:client/core/utils/currency_formatter.dart';
 import 'package:client/features/products/presentation/providers/product_list_notifier.dart';
+import 'package:client/features/products/presentation/widgets/product_list_item.dart';
+import 'package:client/src/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,273 +13,61 @@ class ProductListScreen extends ConsumerWidget {
     final productState = ref.watch(productListProvider);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(title: const Text("Katalog Produk"), centerTitle: true),
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        title: Text("Katalog Produk", style: Theme.of(context).textTheme.titleLarge),
+        centerTitle: true,
+      ),
       body: productState.when(
         data: (products) => products.isEmpty
-            ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.inventory_2_outlined,
-                      size: 64,
-                      color: Colors.grey[400],
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      "Belum ada produk",
-                      style: TextStyle(color: Colors.grey[600], fontSize: 16),
-                    ),
-                  ],
-                ),
-              )
-            : RefreshIndicator(
-                onRefresh: () async =>
-                    ref.read(productListProvider.notifier).refresh(),
-                child: ListView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    final product = products[index];
-                    final minPrice = product.variants.isNotEmpty
-                        ? product.variants
-                              .map((v) => v.price)
-                              .reduce((a, b) => a < b ? a : b)
-                        : 0.0;
-                    final totalStock = product.variants.isNotEmpty
-                        ? product.variants
-                              .map((v) => v.stock)
-                              .reduce((a, b) => a + b)
-                        : 0;
-
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.grey[200]!),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.02),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(20),
-                        onTap: () => context.push('/products/${product.id}'),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  // Product Thumbnail
-                                  Hero(
-                                    tag: 'product_image_${product.id}',
-                                    child: Container(
-                                      width: 60,
-                                      height: 60,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[100],
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child:
-                                          product.imageUrl != null &&
-                                              product.imageUrl!.isNotEmpty
-                                          ? ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              child: CachedNetworkImage(
-                                                imageUrl: product.imageUrl!,
-                                                fit: BoxFit.cover,
-                                                placeholder: (context, url) =>
-                                                    const Center(
-                                                      child: SizedBox(
-                                                        width: 20,
-                                                        height: 20,
-                                                        child:
-                                                            CircularProgressIndicator(
-                                                              strokeWidth: 2,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                errorWidget:
-                                                    (
-                                                      context,
-                                                      url,
-                                                      error,
-                                                    ) => Icon(
-                                                      Icons
-                                                          .broken_image_outlined,
-                                                      color: Colors.grey[400],
-                                                      size: 24,
-                                                    ),
-                                              ),
-                                            )
-                                          : Icon(
-                                              Icons.image_outlined,
-                                              color: Colors.grey[400],
-                                              size: 32,
-                                            ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                product.name,
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 10,
-                                                    vertical: 4,
-                                                  ),
-                                              decoration: BoxDecoration(
-                                                color: const Color(
-                                                  0xFF6366F1,
-                                                ).withValues(alpha: 0.1),
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: Text(
-                                                product.category,
-                                                style: const TextStyle(
-                                                  color: Color(0xFF6366F1),
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        if (product.description.isNotEmpty) ...[
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            product.description,
-                                            style: TextStyle(
-                                              color: Colors.grey[600],
-                                              fontSize: 12,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ],
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              const Divider(height: 1),
-                              const SizedBox(height: 12),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Mulai dari",
-                                        style: TextStyle(
-                                          color: Colors.grey[500],
-                                          fontSize: 11,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        CurrencyFormatter.toIDR(minPrice),
-                                        style: const TextStyle(
-                                          color: Color(0xFF10B981),
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.inventory_2_outlined,
-                                        size: 16,
-                                        color: Colors.grey[500],
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        "$totalStock Stok",
-                                        style: TextStyle(
-                                          color: Colors.grey[700],
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Icon(
-                                        Icons.layers_outlined,
-                                        size: 16,
-                                        color: Colors.grey[500],
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        "${product.variants.length} Varian",
-                                        style: TextStyle(
-                                          color: Colors.grey[700],
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
+            ? _buildEmptyState()
+            : _buildList(context, ref, products),
         loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFF6366F1)),
+          child: CircularProgressIndicator(color: AppColors.primary),
         ),
         error: (err, stack) => Center(child: Text("Error: $err")),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF6366F1),
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        onPressed: () {
-          context.push('/products/add');
-        },
+        onPressed: () => context.push('/products/add'),
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.inventory_2_outlined, size: 64, color: AppColors.textSecondary),
+          const SizedBox(height: 16),
+          Text(
+            "Belum ada produk",
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildList(BuildContext context, WidgetRef ref, List products) {
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () async => ref.read(productListProvider.notifier).refresh(),
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        itemCount: products.length,
+        itemBuilder: (context, index) {
+          final product = products[index];
+          return ProductListItem(
+            product: product,
+            onTap: () => context.push('/products/${product.id}'),
+          );
+        },
       ),
     );
   }

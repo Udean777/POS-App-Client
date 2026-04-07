@@ -1,3 +1,5 @@
+import 'package:client/core/presentation/widgets/app_button.dart';
+import 'package:client/src/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class ShortcutItem extends StatelessWidget {
@@ -28,24 +30,17 @@ class ShortcutItem extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: (color ?? const Color(0xFF6366F1)).withValues(
-                  alpha: 0.1,
-                ),
+                color: (color ?? AppColors.primary).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Icon(
-                icon,
-                color: color ?? const Color(0xFF6366F1),
-                size: 24,
-              ),
+              child: Icon(icon, color: color ?? AppColors.primary, size: 24),
             ),
           ),
         ),
         const SizedBox(height: 8),
         Text(
           title,
-          style: TextStyle(
-            fontSize: 11,
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
             fontWeight: FontWeight.w600,
             color: Colors.grey[800],
           ),
@@ -75,18 +70,11 @@ class DashboardShortcuts extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 "Menu Cepat",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
-                ),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
-              TextButton(
-                onPressed: onMoreTap,
-                child: const Text("Lihat Semua"),
-              ),
+              AppTextButton(onPressed: onMoreTap, text: "Lihat Semua"),
             ],
           ),
         ),

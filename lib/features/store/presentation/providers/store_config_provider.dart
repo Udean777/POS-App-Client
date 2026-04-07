@@ -1,5 +1,5 @@
 import 'package:client/features/auth/domain/providers/auth_domain_providers.dart';
-import 'package:client/features/auth/presentation/providers/profile_provider.dart';
+import 'package:client/features/profile/presentation/providers/profile_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'store_config_provider.g.dart';
