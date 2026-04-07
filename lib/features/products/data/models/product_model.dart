@@ -11,6 +11,7 @@ abstract class ProductModel with _$ProductModel {
     required String name,
     String? description,
     required String category,
+    @JsonKey(name: 'image_url') String? imageUrl,
     required List<VariantModel> variants,
     @JsonKey(name: 'created_at') DateTime? createdAt,
   }) = _ProductModel;
@@ -39,6 +40,7 @@ extension ProductModelX on ProductModel {
     name: name,
     description: description ?? '',
     category: category,
+    imageUrl: imageUrl,
     variants: variants.map((v) => v.toEntity()).toList(),
   );
 }

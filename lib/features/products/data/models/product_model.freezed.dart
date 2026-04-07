@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProductModel {
 
- String get id; String get name; String? get description; String get category; List<VariantModel> get variants;@JsonKey(name: 'created_at') DateTime? get createdAt;
+ String get id; String get name; String? get description; String get category;@JsonKey(name: 'image_url') String? get imageUrl; List<VariantModel> get variants;@JsonKey(name: 'created_at') DateTime? get createdAt;
 /// Create a copy of ProductModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ProductModelCopyWith<ProductModel> get copyWith => _$ProductModelCopyWithImpl<P
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.category, category) || other.category == category)&&const DeepCollectionEquality().equals(other.variants, variants)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.category, category) || other.category == category)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&const DeepCollectionEquality().equals(other.variants, variants)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,description,category,const DeepCollectionEquality().hash(variants),createdAt);
+int get hashCode => Object.hash(runtimeType,id,name,description,category,imageUrl,const DeepCollectionEquality().hash(variants),createdAt);
 
 @override
 String toString() {
-  return 'ProductModel(id: $id, name: $name, description: $description, category: $category, variants: $variants, createdAt: $createdAt)';
+  return 'ProductModel(id: $id, name: $name, description: $description, category: $category, imageUrl: $imageUrl, variants: $variants, createdAt: $createdAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ProductModelCopyWith<$Res>  {
   factory $ProductModelCopyWith(ProductModel value, $Res Function(ProductModel) _then) = _$ProductModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String? description, String category, List<VariantModel> variants,@JsonKey(name: 'created_at') DateTime? createdAt
+ String id, String name, String? description, String category,@JsonKey(name: 'image_url') String? imageUrl, List<VariantModel> variants,@JsonKey(name: 'created_at') DateTime? createdAt
 });
 
 
@@ -65,13 +65,14 @@ class _$ProductModelCopyWithImpl<$Res>
 
 /// Create a copy of ProductModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? description = freezed,Object? category = null,Object? variants = null,Object? createdAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? description = freezed,Object? category = null,Object? imageUrl = freezed,Object? variants = null,Object? createdAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
-as String,variants: null == variants ? _self.variants : variants // ignore: cast_nullable_to_non_nullable
+as String,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
+as String?,variants: null == variants ? _self.variants : variants // ignore: cast_nullable_to_non_nullable
 as List<VariantModel>,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
@@ -158,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String? description,  String category,  List<VariantModel> variants, @JsonKey(name: 'created_at')  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String? description,  String category, @JsonKey(name: 'image_url')  String? imageUrl,  List<VariantModel> variants, @JsonKey(name: 'created_at')  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProductModel() when $default != null:
-return $default(_that.id,_that.name,_that.description,_that.category,_that.variants,_that.createdAt);case _:
+return $default(_that.id,_that.name,_that.description,_that.category,_that.imageUrl,_that.variants,_that.createdAt);case _:
   return orElse();
 
 }
@@ -179,10 +180,10 @@ return $default(_that.id,_that.name,_that.description,_that.category,_that.varia
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String? description,  String category,  List<VariantModel> variants, @JsonKey(name: 'created_at')  DateTime? createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String? description,  String category, @JsonKey(name: 'image_url')  String? imageUrl,  List<VariantModel> variants, @JsonKey(name: 'created_at')  DateTime? createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _ProductModel():
-return $default(_that.id,_that.name,_that.description,_that.category,_that.variants,_that.createdAt);case _:
+return $default(_that.id,_that.name,_that.description,_that.category,_that.imageUrl,_that.variants,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +200,10 @@ return $default(_that.id,_that.name,_that.description,_that.category,_that.varia
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String? description,  String category,  List<VariantModel> variants, @JsonKey(name: 'created_at')  DateTime? createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String? description,  String category, @JsonKey(name: 'image_url')  String? imageUrl,  List<VariantModel> variants, @JsonKey(name: 'created_at')  DateTime? createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _ProductModel() when $default != null:
-return $default(_that.id,_that.name,_that.description,_that.category,_that.variants,_that.createdAt);case _:
+return $default(_that.id,_that.name,_that.description,_that.category,_that.imageUrl,_that.variants,_that.createdAt);case _:
   return null;
 
 }
@@ -214,13 +215,14 @@ return $default(_that.id,_that.name,_that.description,_that.category,_that.varia
 @JsonSerializable()
 
 class _ProductModel implements ProductModel {
-  const _ProductModel({required this.id, required this.name, this.description, required this.category, required final  List<VariantModel> variants, @JsonKey(name: 'created_at') this.createdAt}): _variants = variants;
+  const _ProductModel({required this.id, required this.name, this.description, required this.category, @JsonKey(name: 'image_url') this.imageUrl, required final  List<VariantModel> variants, @JsonKey(name: 'created_at') this.createdAt}): _variants = variants;
   factory _ProductModel.fromJson(Map<String, dynamic> json) => _$ProductModelFromJson(json);
 
 @override final  String id;
 @override final  String name;
 @override final  String? description;
 @override final  String category;
+@override@JsonKey(name: 'image_url') final  String? imageUrl;
  final  List<VariantModel> _variants;
 @override List<VariantModel> get variants {
   if (_variants is EqualUnmodifiableListView) return _variants;
@@ -243,16 +245,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProductModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.category, category) || other.category == category)&&const DeepCollectionEquality().equals(other._variants, _variants)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProductModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.category, category) || other.category == category)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&const DeepCollectionEquality().equals(other._variants, _variants)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,description,category,const DeepCollectionEquality().hash(_variants),createdAt);
+int get hashCode => Object.hash(runtimeType,id,name,description,category,imageUrl,const DeepCollectionEquality().hash(_variants),createdAt);
 
 @override
 String toString() {
-  return 'ProductModel(id: $id, name: $name, description: $description, category: $category, variants: $variants, createdAt: $createdAt)';
+  return 'ProductModel(id: $id, name: $name, description: $description, category: $category, imageUrl: $imageUrl, variants: $variants, createdAt: $createdAt)';
 }
 
 
@@ -263,7 +265,7 @@ abstract mixin class _$ProductModelCopyWith<$Res> implements $ProductModelCopyWi
   factory _$ProductModelCopyWith(_ProductModel value, $Res Function(_ProductModel) _then) = __$ProductModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String? description, String category, List<VariantModel> variants,@JsonKey(name: 'created_at') DateTime? createdAt
+ String id, String name, String? description, String category,@JsonKey(name: 'image_url') String? imageUrl, List<VariantModel> variants,@JsonKey(name: 'created_at') DateTime? createdAt
 });
 
 
@@ -280,13 +282,14 @@ class __$ProductModelCopyWithImpl<$Res>
 
 /// Create a copy of ProductModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? description = freezed,Object? category = null,Object? variants = null,Object? createdAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? description = freezed,Object? category = null,Object? imageUrl = freezed,Object? variants = null,Object? createdAt = freezed,}) {
   return _then(_ProductModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String?,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
-as String,variants: null == variants ? _self._variants : variants // ignore: cast_nullable_to_non_nullable
+as String,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
+as String?,variants: null == variants ? _self._variants : variants // ignore: cast_nullable_to_non_nullable
 as List<VariantModel>,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));

@@ -7,6 +7,8 @@ import 'package:client/features/products/domain/usecases/get_products_usecase.da
 import 'package:client/features/products/domain/usecases/get_product_usecase.dart';
 import 'package:client/features/products/domain/usecases/update_product_usecase.dart';
 import 'package:client/features/products/domain/usecases/delete_product_usecase.dart';
+import 'package:client/features/products/domain/usecases/upload_image_usecase.dart';
+import 'package:client/features/products/domain/usecases/restock_variant.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'product_providers.g.dart';
@@ -51,4 +53,16 @@ UpdateProductUsecase updateProductUsecase(Ref ref) {
 DeleteProductUsecase deleteProductUsecase(Ref ref) {
   final repository = ref.watch(productRepositoryProvider);
   return DeleteProductUsecase(repository);
+}
+
+@riverpod
+UploadImageUsecase uploadImageUsecase(Ref ref) {
+  final repository = ref.watch(productRepositoryProvider);
+  return UploadImageUsecase(repository);
+}
+
+@riverpod
+RestockVariant restockVariantUsecase(Ref ref) {
+  final repository = ref.watch(productRepositoryProvider);
+  return RestockVariant(repository);
 }

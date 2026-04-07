@@ -1,5 +1,9 @@
 import 'package:client/features/auth/presentation/providers/auth_notifier.dart';
 import 'package:client/features/auth/presentation/providers/state/auth_state.dart';
+import 'package:client/core/presentation/widgets/app_text_field.dart';
+import 'package:client/core/presentation/widgets/app_button.dart';
+import 'package:client/core/presentation/widgets/app_card.dart';
+import 'package:client/src/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,13 +34,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       next.maybeWhen(
         initial: () {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Registrasi Berhasil! Silakan Login.'),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+            const SnackBar(
+              content: Text('Registrasi Berhasil! Silakan Login.'),
+              backgroundColor: AppColors.success,
             ),
           );
           context.goNamed('login');
@@ -45,11 +45,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(message),
-              backgroundColor: Colors.redAccent,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+              backgroundColor: AppColors.danger,
             ),
           );
         },
@@ -60,12 +56,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final state = ref.watch(authNotifierProvider);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: const Icon(Icons.arrow_back, color: AppColors.textHeadline),
           onPressed: () => context.goNamed('login'),
         ),
       ),
@@ -80,95 +76,80 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 "Daftar UMKM",
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: AppColors.textHeadline,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 "Mulai kelola bisnis Anda secara digital hari ini",
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
+                  color: AppColors.textSecondary,
                 ),
               ),
               const SizedBox(height: 40),
 
-              // Form
-              TextField(
-                controller: _businessController,
-                decoration: const InputDecoration(
-                  labelText: 'Nama Bisnis/Toko',
-                  hintText: 'Toko Berkah Utama',
-                  prefixIcon: Icon(Icons.store_outlined),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: 'Email Pemilik',
-                  hintText: 'owner@toko.com',
-                  prefixIcon: Icon(Icons.email_outlined),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  hintText: 'Minimal 6 karakter',
-                  prefixIcon: Icon(Icons.lock_outlined),
+              AppCard(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    AppTextField(
+                      controller: _businessController,
+                      labelText: 'Nama Bisnis/Toko',
+                      hintText: 'Toko Berkah Utama',
+                      prefixIcon: const Icon(Icons.store_outlined),
+                    ),
+                    const SizedBox(height: 20),
+                    AppTextField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      labelText: 'Email Pemilik',
+                      hintText: 'owner@toko.com',
+                      prefixIcon: const Icon(Icons.email_outlined),
+                    ),
+                    const SizedBox(height: 20),
+                    AppTextField(
+                      controller: _passwordController,
+                      isPassword: true,
+                      labelText: 'Password',
+                      hintText: 'Minimal 6 karakter',
+                      prefixIcon: const Icon(Icons.lock_outlined),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 48),
 
-              // Register Button
-              ElevatedButton(
-                onPressed: state.maybeWhen(
-                  loading: () => null,
-                  orElse: () => () {
-                    ref
-                        .read(authNotifierProvider.notifier)
-                        .register(
-                          _emailController.text,
-                          _passwordController.text,
-                          _businessController.text,
-                        );
-                  },
+              AppButton(
+                text: 'Daftar Sekarang',
+                isLoading: state.maybeWhen(
+                  loading: () => true,
+                  orElse: () => false,
                 ),
-                child: state.maybeWhen(
-                  loading:
-                      () => const SizedBox(
-                        height: 24,
-                        width: 24,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      ),
-                  orElse: () => const Text('Daftar Sekarang'),
-                ),
+                onPressed: () {
+                  ref
+                      .read(authNotifierProvider.notifier)
+                      .register(
+                        _emailController.text,
+                        _passwordController.text,
+                        _businessController.text,
+                      );
+                },
               ),
               const SizedBox(height: 24),
 
-              // Login Link
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     "Sudah memiliki akun?",
-                    style: TextStyle(color: Colors.grey[600]),
-                  ),
-                  TextButton(
-                    onPressed: () => context.goNamed('login'),
-                    child: Text(
-                      "Masuk",
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.textSecondary,
                     ),
+                  ),
+                  AppTextButton(
+                    onPressed: () => context.goNamed('login'),
+                    text: "Masuk",
+                    fontWeight: FontWeight.bold,
                   ),
                 ],
               ),
@@ -180,4 +161,3 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     );
   }
 }
-

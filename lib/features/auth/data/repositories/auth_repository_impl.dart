@@ -89,9 +89,10 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, void>> createStaff({
     required String email,
     required String password,
+    required String role,
   }) async {
     try {
-      await remoteDataSource.createStaff(email, password);
+      await remoteDataSource.createStaff(email, password, role);
       return const Right(null);
     } on DioException catch (e) {
       final dynamic data = e.response?.data;
@@ -115,6 +116,37 @@ class AuthRepositoryImpl implements AuthRepository {
     } on DioException catch (e) {
       final dynamic data = e.response?.data;
       String message = 'Gagal mengambil data staf';
+
+      if (data is Map) {
+        message = data['error'] ?? message;
+      }
+
+      return Left(Failure(message));
+    } catch (e) {
+      return Left(Failure('Koneksi bermasalah'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> updateBusiness({
+    required String name,
+    required String type,
+    required String address,
+    required String phone,
+    String? logoUrl,
+  }) async {
+    try {
+      await remoteDataSource.updateBusiness(
+        name: name,
+        type: type,
+        address: address,
+        phone: phone,
+        logoUrl: logoUrl,
+      );
+      return const Right(null);
+    } on DioException catch (e) {
+      final dynamic data = e.response?.data;
+      String message = 'Gagal memperbarui konfigurasi toko';
 
       if (data is Map) {
         message = data['error'] ?? message;

@@ -9,6 +9,7 @@ abstract class ProductEntity with _$ProductEntity {
     required String name,
     required String description,
     required String category,
+    String? imageUrl,
     required List<VariantEntity> variants,
   }) = _ProductEntity;
 }

@@ -44,6 +44,7 @@ class ProductRepositoryImpl implements ProductRepository {
         "name": product.name,
         "description": product.description,
         "category": product.category,
+        "image_url": product.imageUrl,
         "variants": product.variants
             .map(
               (v) => {
@@ -72,6 +73,7 @@ class ProductRepositoryImpl implements ProductRepository {
         "name": product.name,
         "description": product.description,
         "category": product.category,
+        "image_url": product.imageUrl,
         "variants": product.variants
             .map(
               (v) => {
@@ -101,6 +103,29 @@ class ProductRepositoryImpl implements ProductRepository {
       return Left(
         Failure(e.response?.data['error'] ?? "Gagal menghapus produk"),
       );
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> restockVariant(
+    String variantId,
+    int quantity,
+  ) async {
+    try {
+      await remoteDataSource.restockVariant(variantId, quantity);
+      return const Right(null);
+    } on DioException catch (e) {
+      return Left(Failure(e.response?.data['error'] ?? "Gagal menambah stok"));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> uploadProductImage(String filePath) async {
+    try {
+      final url = await remoteDataSource.uploadImage(filePath);
+      return Right(url);
+    } on DioException catch (e) {
+      return Left(Failure(e.response?.data['error'] ?? "Gagal upload gambar"));
     }
   }
 }

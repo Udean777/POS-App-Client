@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:client/src/theme/app_theme.dart';
 
 class MainScreen extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
-  const MainScreen({
-    super.key,
-    required this.navigationShell,
-  });
+  const MainScreen({super.key, required this.navigationShell});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: navigationShell,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.card,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: AppColors.shadow.withValues(alpha: 0.04),
               blurRadius: 20,
               offset: const Offset(0, -5),
             ),
@@ -30,7 +29,7 @@ class MainScreen extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.grey[100],
+                color: AppColors.surfaceVariant,
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Row(
@@ -39,16 +38,37 @@ class MainScreen extends StatelessWidget {
                   _NavBarItem(
                     icon: Icons.dashboard_outlined,
                     activeIcon: Icons.dashboard,
-                    label: "Dashboard",
+                    label: "Beranda",
                     isActive: navigationShell.currentIndex == 0,
                     onTap: () => navigationShell.goBranch(0),
+                  ),
+                  _NavBarItem(
+                    icon: Icons.point_of_sale_outlined,
+                    activeIcon: Icons.point_of_sale,
+                    label: "POS",
+                    isActive: navigationShell.currentIndex == 1,
+                    onTap: () => navigationShell.goBranch(1),
+                  ),
+                  _NavBarItem(
+                    icon: Icons.inventory_2_outlined,
+                    activeIcon: Icons.inventory_2,
+                    label: "Produk",
+                    isActive: navigationShell.currentIndex == 2,
+                    onTap: () => navigationShell.goBranch(2),
+                  ),
+                  _NavBarItem(
+                    icon: Icons.history,
+                    activeIcon: Icons.history,
+                    label: "Riwayat",
+                    isActive: navigationShell.currentIndex == 3,
+                    onTap: () => navigationShell.goBranch(3),
                   ),
                   _NavBarItem(
                     icon: Icons.person_outline,
                     activeIcon: Icons.person,
                     label: "Profil",
-                    isActive: navigationShell.currentIndex == 1,
-                    onTap: () => navigationShell.goBranch(1),
+                    isActive: navigationShell.currentIndex == 4,
+                    onTap: () => navigationShell.goBranch(4),
                   ),
                 ],
               ),
@@ -81,39 +101,63 @@ class _NavBarItem extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOutCubic,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: isActive ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: isActive
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : null,
+          color: isActive ? AppColors.card : AppColors.surfaceVariant,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: isActive
+                  ? AppColors.shadow.withValues(alpha: 0.08)
+                  : Colors.transparent,
+              blurRadius: isActive ? 15 : 0,
+              offset: isActive ? const Offset(0, 6) : Offset.zero,
+            ),
+          ],
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              isActive ? activeIcon : icon,
-              color: isActive ? const Color(0xFF6366F1) : Colors.grey[600],
-              size: 24,
-            ),
-            if (isActive) ...[
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: const TextStyle(
-                  color: Color(0xFF6366F1),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (child, animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              child: Icon(
+                isActive ? activeIcon : icon,
+                key: ValueKey(isActive),
+                color: isActive ? AppColors.primary : AppColors.textSecondary,
+                size: 24,
               ),
-            ],
+            ),
+            // Smoothly animate the expansion and fading of the label
+            AnimatedSize(
+              duration: const Duration(milliseconds: 350),
+              curve: Curves.easeInOutCubic,
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (isActive) ...[
+                    const SizedBox(width: 10),
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 250),
+                      opacity: isActive ? 1.0 : 0.0,
+                      curve: Curves.easeIn,
+                      child: Text(
+                        label,
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ],
         ),
       ),

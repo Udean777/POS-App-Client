@@ -1,6 +1,9 @@
-import 'package:client/features/auth/presentation/providers/profile_provider.dart';
-import 'package:client/features/dashboard/presentation/widgets/dashboard_action_card.dart';
-import 'package:client/features/dashboard/presentation/widgets/stacked_stat_carousel.dart';
+import 'package:client/features/profile/presentation/providers/profile_provider.dart';
+import 'package:client/features/dashboard/presentation/widgets/dashboard_header.dart';
+import 'package:client/features/dashboard/presentation/widgets/dashboard_shortcuts.dart';
+import 'package:client/features/dashboard/presentation/widgets/sales_chart_widget.dart';
+import 'package:client/features/dashboard/presentation/widgets/top_products_widget.dart';
+import 'package:client/features/dashboard/presentation/widgets/low_stock_warning_card.dart';
 import 'package:client/features/products/presentation/providers/product_list_notifier.dart';
 import 'package:client/features/transaction/presentation/providers/transaction_list_provider.dart';
 import 'package:flutter/material.dart';
@@ -13,32 +16,10 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileAsync = ref.watch(profileProvider);
-    final productState = ref.watch(productListProvider);
     final transactionState = ref.watch(transactionListProvider);
 
-    final totalProducts = productState.maybeWhen(
-      data: (products) => products.length.toString(),
-      orElse: () => "0",
-    );
-
-    final transactionsToday = transactionState.maybeWhen(
-      data: (transactions) {
-        final now = DateTime.now();
-        return transactions
-            .where((tx) {
-              final txDate = tx.createdAt.toLocal();
-              return txDate.year == now.year &&
-                  txDate.month == now.month &&
-                  txDate.day == now.day;
-            })
-            .length
-            .toString();
-      },
-      orElse: () => "0",
-    );
-
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.grey[50], // Background subtle modern
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(profileProvider);
@@ -48,86 +29,92 @@ class DashboardScreen extends ConsumerWidget {
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            // Header dan Statistik Ringkas
+            // Header Section (Profile + Revenue Report)
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 60, bottom: 8),
-                child: StackedStatCarousel(
-                  totalProducts: totalProducts,
-                  transactionsToday: transactionsToday,
+              child: profileAsync.when(
+                data: (user) => transactionState.when(
+                  data: (transactions) =>
+                      DashboardHeader(user: user, transactions: transactions),
+                  loading: () => const SizedBox(height: 200),
+                  error: (err, _) => const SizedBox(),
                 ),
+                loading: () => const SizedBox(height: 200),
+                error: (err, _) => const SizedBox(),
               ),
             ),
 
-            // Menu Navigasi (Grid)
-            SliverPadding(
-              padding: const EdgeInsets.all(24),
-              sliver: profileAsync.when(
+            const SliverToBoxAdapter(child: LowStockWarningCard()),
+            
+            const SliverToBoxAdapter(child: SizedBox(height: 12)),
+
+            // Menu Cepat (Horizontal)
+            SliverToBoxAdapter(
+              child: profileAsync.when(
                 data: (user) {
                   final bool isOwner = user.role == "OWNER";
 
-                  return SliverGrid(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childAspectRatio: 0.9,
-                        ),
-                    delegate: SliverChildListDelegate([
-                      DashboardActionCard(
-                        title: "Produk",
-                        subtitle: "Atur katalog dan stok",
-                        icon: Icons.inventory_2_outlined,
-                        onTap: () => context.pushNamed('products'),
+                  final List<ShortcutItem> displayedItems = [
+                    ShortcutItem(
+                      title: "Produk",
+                      icon: Icons.inventory_2_outlined,
+                      onTap: () => context.goNamed('products'),
+                    ),
+                    ShortcutItem(
+                      title: "Transaksi",
+                      icon: Icons.point_of_sale_outlined,
+                      color: Colors.orange,
+                      onTap: () => context.goNamed('pos'),
+                    ),
+                    if (isOwner)
+                      ShortcutItem(
+                        title: "Staf",
+                        icon: Icons.people_outline,
+                        color: Colors.teal,
+                        onTap: () => context.pushNamed('staff'),
                       ),
-                      DashboardActionCard(
-                        title: "Transaksi",
-                        subtitle: "Mulai penjualan baru",
-                        icon: Icons.point_of_sale_outlined,
-                        color: Colors.orange,
-                        onTap: () => context.pushNamed('pos'),
-                      ),
-                      // Hanya tampil jika OWNER
-                      if (isOwner)
-                        DashboardActionCard(
-                          title: "Kelola Staf",
-                          subtitle: "Atur hak akses karyawan",
-                          icon: Icons.people_outline,
-                          color: Colors.teal,
-                          onTap: () => context.pushNamed('staff'),
-                        ),
-                      DashboardActionCard(
-                        title: "Riwayat",
-                        subtitle: "Riwayat transaksi",
-                        icon: Icons.history,
-                        color: Colors.blue,
-                        onTap: () => context.pushNamed('history'),
-                      ),
-                      DashboardActionCard(
-                        title: "Pengaturan",
-                        subtitle: "Konfigurasi toko & profil",
-                        icon: Icons.settings_outlined,
-                        color: Colors.grey[700],
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Fitur Pengaturan segera hadir!"),
-                            ),
-                          );
-                        },
-                      ),
-                    ]),
+                    ShortcutItem(
+                      title: "Riwayat",
+                      icon: Icons.history,
+                      color: Colors.blue,
+                      onTap: () => context.goNamed('history'),
+                    ),
+                  ];
+
+                  return DashboardShortcuts(
+                    onMoreTap: () => context.push('/all-menu'),
+                    items: displayedItems,
                   );
                 },
-                loading: () => const SliverToBoxAdapter(
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-                error: (err, _) => SliverToBoxAdapter(
-                  child: Center(child: Text("Error: $err")),
-                ),
+                loading: () => const SizedBox(height: 100),
+                error: (err, _) => const SizedBox(),
               ),
             ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+            // Sales Chart
+            SliverToBoxAdapter(
+              child: transactionState.when(
+                data: (transactions) =>
+                    SalesChartWidget(transactions: transactions),
+                loading: () => const SizedBox(height: 200),
+                error: (err, _) => const SizedBox(),
+              ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+            // Top Products
+            SliverToBoxAdapter(
+              child: transactionState.when(
+                data: (transactions) =>
+                    TopProductsWidget(transactions: transactions),
+                loading: () => const SizedBox(height: 150),
+                error: (err, _) => const SizedBox(),
+              ),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
           ],
         ),
       ),

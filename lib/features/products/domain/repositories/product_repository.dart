@@ -12,4 +12,8 @@ abstract class ProductRepository {
   Future<Either<Failure, void>> updateProduct(ProductEntity product);
 
   Future<Either<Failure, void>> deleteProduct(String id);
+
+  Future<Either<Failure, void>> restockVariant(String variantId, int quantity);
+
+  Future<Either<Failure, String>> uploadProductImage(String filePath);
 }

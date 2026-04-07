@@ -341,3 +341,93 @@ final class DeleteProductUsecaseProvider
 
 String _$deleteProductUsecaseHash() =>
     r'9d7715354b116b3d6aadb785ec3551f6389d51e1';
+
+@ProviderFor(uploadImageUsecase)
+final uploadImageUsecaseProvider = UploadImageUsecaseProvider._();
+
+final class UploadImageUsecaseProvider
+    extends
+        $FunctionalProvider<
+          UploadImageUsecase,
+          UploadImageUsecase,
+          UploadImageUsecase
+        >
+    with $Provider<UploadImageUsecase> {
+  UploadImageUsecaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'uploadImageUsecaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$uploadImageUsecaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<UploadImageUsecase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  UploadImageUsecase create(Ref ref) {
+    return uploadImageUsecase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(UploadImageUsecase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<UploadImageUsecase>(value),
+    );
+  }
+}
+
+String _$uploadImageUsecaseHash() =>
+    r'887874a7bafb4c5b81818cfcfb1cbdb1478ed5cd';
+
+@ProviderFor(restockVariantUsecase)
+final restockVariantUsecaseProvider = RestockVariantUsecaseProvider._();
+
+final class RestockVariantUsecaseProvider
+    extends $FunctionalProvider<RestockVariant, RestockVariant, RestockVariant>
+    with $Provider<RestockVariant> {
+  RestockVariantUsecaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'restockVariantUsecaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$restockVariantUsecaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<RestockVariant> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  RestockVariant create(Ref ref) {
+    return restockVariantUsecase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(RestockVariant value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<RestockVariant>(value),
+    );
+  }
+}
+
+String _$restockVariantUsecaseHash() =>
+    r'b6ffc7d4f8d1a9fb94003e04c7488a30eecfdb24';
