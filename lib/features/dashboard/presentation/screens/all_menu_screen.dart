@@ -16,7 +16,10 @@ class AllMenuScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text("Semua Menu", style: Theme.of(context).textTheme.titleLarge),
+        title: Text(
+          "Semua Menu",
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
         centerTitle: true,
       ),
       body: profileAsync.when(
@@ -34,14 +37,14 @@ class AllMenuScreen extends ConsumerWidget {
                 title: "Produk",
                 subtitle: "Atur katalog dan stok",
                 icon: Icons.inventory_2_outlined,
-                onTap: () => context.pushNamed('products'),
+                onTap: () => context.goNamed('products'),
               ),
               DashboardActionCard(
                 title: "Transaksi",
                 subtitle: "Mulai penjualan baru",
                 icon: Icons.point_of_sale_outlined,
                 color: AppColors.warning,
-                onTap: () => context.pushNamed('pos'),
+                onTap: () => context.goNamed('pos'),
               ),
               if (isOwner)
                 DashboardActionCard(
@@ -56,7 +59,7 @@ class AllMenuScreen extends ConsumerWidget {
                 subtitle: "Riwayat transaksi",
                 icon: Icons.history,
                 color: AppColors.info,
-                onTap: () => context.pushNamed('history'),
+                onTap: () => context.goNamed('history'),
               ),
               DashboardActionCard(
                 title: "Pengaturan",

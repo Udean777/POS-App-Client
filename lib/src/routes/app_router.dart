@@ -69,6 +69,7 @@ GoRouter goRouter(Ref ref) {
           return MainScreen(navigationShell: navigationShell);
         },
         branches: [
+          // Branch 0: Dashboard
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -81,6 +82,46 @@ GoRouter goRouter(Ref ref) {
               ),
             ],
           ),
+          // Branch 1: POS
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.pos,
+                name: RouteNames.pos,
+                pageBuilder: (context, state) => AppPageTransitions.scaleUp(
+                  state: state,
+                  child: const PosScreen(),
+                ),
+              ),
+            ],
+          ),
+          // Branch 2: Produk
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.products,
+                name: RouteNames.products,
+                pageBuilder: (context, state) => AppPageTransitions.slideRight(
+                  state: state,
+                  child: const ProductListScreen(),
+                ),
+              ),
+            ],
+          ),
+          // Branch 3: Riwayat
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePaths.history,
+                name: RouteNames.history,
+                pageBuilder: (context, state) => AppPageTransitions.slideRight(
+                  state: state,
+                  child: const TransactionHistoryScreen(),
+                ),
+              ),
+            ],
+          ),
+          // Branch 4: Profil
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -130,15 +171,7 @@ GoRouter goRouter(Ref ref) {
         ),
       ),
 
-      // --- Product Management ---
-      GoRoute(
-        path: RoutePaths.products,
-        name: RouteNames.products,
-        pageBuilder: (context, state) => AppPageTransitions.slideRight(
-          state: state,
-          child: const ProductListScreen(),
-        ),
-      ),
+      // --- Product Management (Details and Forms stay outside shell) ---
       GoRoute(
         path: RoutePaths.addProduct,
         name: RouteNames.addProduct,
@@ -168,22 +201,6 @@ GoRouter goRouter(Ref ref) {
             child: EditProductScreen(product: product),
           );
         },
-      ),
-
-      // --- Transaction & POS ---
-      GoRoute(
-        path: RoutePaths.pos,
-        name: RouteNames.pos,
-        pageBuilder: (context, state) =>
-            AppPageTransitions.scaleUp(state: state, child: const PosScreen()),
-      ),
-      GoRoute(
-        path: RoutePaths.history,
-        name: RouteNames.history,
-        pageBuilder: (context, state) => AppPageTransitions.slideRight(
-          state: state,
-          child: const TransactionHistoryScreen(),
-        ),
       ),
     ],
   );

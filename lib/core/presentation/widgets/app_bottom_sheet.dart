@@ -67,9 +67,8 @@ class AppBottomSheet extends StatelessWidget {
                 ),
               ),
             ),
-          Padding(
-            padding: padding ?? EdgeInsets.zero,
-            child: child,
+          Flexible(
+            child: Padding(padding: padding ?? EdgeInsets.zero, child: child),
           ),
         ],
       ),

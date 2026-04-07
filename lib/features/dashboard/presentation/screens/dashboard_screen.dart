@@ -1,8 +1,8 @@
 import 'package:client/features/profile/presentation/providers/profile_provider.dart';
+import 'package:client/features/dashboard/presentation/widgets/dashboard_header.dart';
 import 'package:client/features/dashboard/presentation/widgets/dashboard_shortcuts.dart';
 import 'package:client/features/dashboard/presentation/widgets/sales_chart_widget.dart';
 import 'package:client/features/dashboard/presentation/widgets/top_products_widget.dart';
-import 'package:client/features/dashboard/presentation/widgets/stacked_stat_carousel.dart';
 import 'package:client/features/products/presentation/providers/product_list_notifier.dart';
 import 'package:client/features/transaction/presentation/providers/transaction_list_provider.dart';
 import 'package:flutter/material.dart';
@@ -15,32 +15,10 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileAsync = ref.watch(profileProvider);
-    final productState = ref.watch(productListProvider);
     final transactionState = ref.watch(transactionListProvider);
 
-    final totalProducts = productState.maybeWhen(
-      data: (products) => products.length.toString(),
-      orElse: () => "0",
-    );
-
-    final transactionsToday = transactionState.maybeWhen(
-      data: (transactions) {
-        final now = DateTime.now();
-        return transactions
-            .where((tx) {
-              final txDate = tx.createdAt.toLocal();
-              return txDate.year == now.year &&
-                  txDate.month == now.month &&
-                  txDate.day == now.day;
-            })
-            .length
-            .toString();
-      },
-      orElse: () => "0",
-    );
-
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.grey[50], // Background subtle modern
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(profileProvider);
@@ -50,16 +28,21 @@ class DashboardScreen extends ConsumerWidget {
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            // Header dan Statistik Ringkas
+            // Header Section (Profile + Revenue Report)
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 60),
-                child: StackedStatCarousel(
-                  totalProducts: totalProducts,
-                  transactionsToday: transactionsToday,
+              child: profileAsync.when(
+                data: (user) => transactionState.when(
+                  data: (transactions) =>
+                      DashboardHeader(user: user, transactions: transactions),
+                  loading: () => const SizedBox(height: 200),
+                  error: (err, _) => const SizedBox(),
                 ),
+                loading: () => const SizedBox(height: 200),
+                error: (err, _) => const SizedBox(),
               ),
             ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
             // Menu Cepat (Horizontal)
             SliverToBoxAdapter(
@@ -67,18 +50,17 @@ class DashboardScreen extends ConsumerWidget {
                 data: (user) {
                   final bool isOwner = user.role == "OWNER";
 
-                  // Define the original shortcuts
                   final List<ShortcutItem> displayedItems = [
                     ShortcutItem(
                       title: "Produk",
                       icon: Icons.inventory_2_outlined,
-                      onTap: () => context.pushNamed('products'),
+                      onTap: () => context.goNamed('products'),
                     ),
                     ShortcutItem(
                       title: "Transaksi",
                       icon: Icons.point_of_sale_outlined,
                       color: Colors.orange,
-                      onTap: () => context.pushNamed('pos'),
+                      onTap: () => context.goNamed('pos'),
                     ),
                     if (isOwner)
                       ShortcutItem(
@@ -91,7 +73,7 @@ class DashboardScreen extends ConsumerWidget {
                       title: "Riwayat",
                       icon: Icons.history,
                       color: Colors.blue,
-                      onTap: () => context.pushNamed('history'),
+                      onTap: () => context.goNamed('history'),
                     ),
                   ];
 
@@ -105,6 +87,8 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
 
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
             // Sales Chart
             SliverToBoxAdapter(
               child: transactionState.when(
@@ -115,7 +99,7 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
             // Top Products
             SliverToBoxAdapter(
@@ -127,7 +111,7 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 40)),
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
           ],
         ),
       ),

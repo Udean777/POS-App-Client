@@ -44,7 +44,7 @@ final class CheckoutNotifierProvider
   }
 }
 
-String _$checkoutNotifierHash() => r'ef19e70dec3f3203a59f5a9f69e55868a046f00d';
+String _$checkoutNotifierHash() => r'40e3448e50f63e4984ffac99ce3eb31014630608';
 
 abstract class _$CheckoutNotifier
     extends $Notifier<AsyncValue<TransactionEntity?>> {

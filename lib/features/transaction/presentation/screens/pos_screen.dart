@@ -104,13 +104,15 @@ class PosScreen extends ConsumerWidget {
     WidgetRef ref,
     ProductEntity product,
   ) async {
-    final variant = await AppDialogs.show<VariantEntity>(
+    final variants = await AppDialogs.show<List<VariantEntity>>(
       context: context,
       child: VariantSelectorDialog(product: product),
     );
 
-    if (variant != null && context.mounted) {
-      _addToCart(context, ref, product, variant);
+    if (variants != null && variants.isNotEmpty && context.mounted) {
+      for (final variant in variants) {
+        _addToCart(context, ref, product, variant);
+      }
     }
   }
 

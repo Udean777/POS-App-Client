@@ -1,6 +1,7 @@
 import 'package:client/features/transaction/domain/entities/transaction_entity.dart';
 import 'package:client/features/transaction/domain/providers/transaction_providers.dart';
 import 'package:client/features/transaction/presentation/providers/cart_provider.dart';
+import 'package:client/features/transaction/presentation/providers/transaction_list_provider.dart';
 import 'package:client/features/products/presentation/providers/product_list_notifier.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -38,6 +39,7 @@ class CheckoutNotifier extends _$CheckoutNotifier {
         state = AsyncValue.data(transaction);
         ref.read(cartProvider.notifier).clearCart();
         ref.read(productListProvider.notifier).refresh();
+        ref.invalidate(transactionListProvider);
 
         onSuccess(transaction);
       },
