@@ -25,9 +25,8 @@ class AuthNotifier extends _$AuthNotifier {
         state = AuthState.error(failure.message);
       },
       (token) async {
-        final storage = ref.read(secureStorageProvider);
-        await storage.write(key: AppConstants.tokenKey, value: token);
-
+        // Token sudah disimpan di repository layer, di sini kita hanya perlu
+        // validasi state dan navigasi.
         if (!ref.mounted) return;
 
         ref.invalidate(isAuthenticatedProvider);
@@ -61,6 +60,8 @@ class AuthNotifier extends _$AuthNotifier {
   Future<void> logout() async {
     final storage = ref.read(secureStorageProvider);
     await storage.delete(key: AppConstants.tokenKey);
+    await storage.delete(key: AppConstants.refreshTokenKey);
+    await storage.delete(key: AppConstants.userKey);
 
     if (!ref.mounted) return;
 
@@ -69,4 +70,3 @@ class AuthNotifier extends _$AuthNotifier {
     ref.invalidate(isAuthenticatedProvider);
   }
 }
-

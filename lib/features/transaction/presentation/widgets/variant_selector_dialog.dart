@@ -141,7 +141,7 @@ class _VariantSelectorDialogState extends State<VariantSelectorDialog> {
         shrinkWrap: true,
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
         itemCount: product.variants.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 8),
+        separatorBuilder: (_, _) => const SizedBox(height: 8),
         itemBuilder: (context, index) {
           final v = product.variants[index];
           final isOutOfStock = v.stock <= 0;

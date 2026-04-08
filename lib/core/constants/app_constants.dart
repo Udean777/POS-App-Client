@@ -12,5 +12,6 @@ class AppConstants {
   static const String appName = 'Modal POS';
 
   static const String tokenKey = 'jwt_token';
+  static const String refreshTokenKey = 'refresh_token';
   static const String userKey = 'user_data';
 }

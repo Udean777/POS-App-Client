@@ -115,7 +115,7 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
 
               // Role Selection
               DropdownButtonFormField<String>(
-                value: _selectedRole,
+                initialValue: _selectedRole,
                 decoration: const InputDecoration(
                   labelText: "Pilih Role / Jabatan",
                   prefixIcon: Icon(Icons.badge_outlined),

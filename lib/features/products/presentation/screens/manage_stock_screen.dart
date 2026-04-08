@@ -121,10 +121,12 @@ class _ManageStockScreenState extends ConsumerState<ManageStockScreen> {
 
                   // Filter logic
                   if (_activeFilter == 'Habis') return variant.stock == 0;
-                  if (_activeFilter == '1-10')
+                  if (_activeFilter == '1-10') {
                     return variant.stock >= 1 && variant.stock <= 10;
-                  if (_activeFilter == '11-20')
+                  }
+                  if (_activeFilter == '11-20') {
                     return variant.stock >= 11 && variant.stock <= 20;
+                  }
                   if (_activeFilter == '>20') return variant.stock > 20;
 
                   return true;

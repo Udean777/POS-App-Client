@@ -33,7 +33,7 @@ final class StaffListProvider
   StaffList create() => StaffList();
 }
 
-String _$staffListHash() => r'daf2686ca6e9831097c4ef1937d2960705a924be';
+String _$staffListHash() => r'bf876f909ad617a5e4d31125fd7407888b309f41';
 
 abstract class _$StaffList extends $AsyncNotifier<List<UserEntity>> {
   FutureOr<List<UserEntity>> build();

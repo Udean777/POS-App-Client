@@ -1,5 +1,6 @@
+import 'package:client/features/auth/data/models/auth_model.dart';
 import 'package:client/features/auth/domain/entities/user_entity.dart';
-import 'package:client/features/auth/domain/providers/auth_domain_providers.dart';
+import 'package:client/features/staff/domain/providers/staff_domain_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'staff_provider.g.dart';
@@ -12,7 +13,7 @@ class StaffList extends _$StaffList {
     final result = await usecase.execute();
     return result.fold(
       (failure) => throw failure.message,
-      (staff) => staff,
+      (staff) => staff.map((e) => e.toEntity()).toList(),
     );
   }
 

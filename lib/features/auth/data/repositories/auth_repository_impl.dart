@@ -22,9 +22,16 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final result = await remoteDataSource.login(email, password);
 
-      await storage.write(key: AppConstants.tokenKey, value: result.token);
+      await storage.write(
+        key: AppConstants.tokenKey,
+        value: result.accessToken,
+      );
+      await storage.write(
+        key: AppConstants.refreshTokenKey,
+        value: result.refreshToken,
+      );
 
-      return Right(result.token);
+      return Right(result.accessToken);
     } on DioException catch (e) {
       final dynamic data = e.response?.data;
       String message = 'Terjadi kesalahan pada server';
@@ -86,75 +93,29 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> createStaff({
-    required String email,
-    required String password,
-    required String role,
-  }) async {
+  Future<Either<Failure, String>> refresh() async {
     try {
-      await remoteDataSource.createStaff(email, password, role);
-      return const Right(null);
-    } on DioException catch (e) {
-      final dynamic data = e.response?.data;
-      String message = 'Gagal mendaftarkan staf';
-
-      if (data is Map) {
-        message = data['error'] ?? message;
+      final oldRefreshToken = await storage.read(key: AppConstants.refreshTokenKey);
+      if (oldRefreshToken == null) {
+        return Left(Failure('Sesi telah berakhir'));
       }
 
-      return Left(Failure(message));
-    } catch (e) {
-      return Left(Failure('Koneksi bermasalah'));
-    }
-  }
+      final result = await remoteDataSource.refresh(oldRefreshToken);
 
-  @override
-  Future<Either<Failure, List<UserEntity>>> getStaff() async {
-    try {
-      final models = await remoteDataSource.fetchStaff();
-      return Right(models.map((e) => e.toEntity()).toList());
-    } on DioException catch (e) {
-      final dynamic data = e.response?.data;
-      String message = 'Gagal mengambil data staf';
-
-      if (data is Map) {
-        message = data['error'] ?? message;
-      }
-
-      return Left(Failure(message));
-    } catch (e) {
-      return Left(Failure('Koneksi bermasalah'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, void>> updateBusiness({
-    required String name,
-    required String type,
-    required String address,
-    required String phone,
-    String? logoUrl,
-  }) async {
-    try {
-      await remoteDataSource.updateBusiness(
-        name: name,
-        type: type,
-        address: address,
-        phone: phone,
-        logoUrl: logoUrl,
+      await storage.write(
+        key: AppConstants.tokenKey,
+        value: result.accessToken,
       );
-      return const Right(null);
+      await storage.write(
+        key: AppConstants.refreshTokenKey,
+        value: result.refreshToken,
+      );
+
+      return Right(result.accessToken);
     } on DioException catch (e) {
-      final dynamic data = e.response?.data;
-      String message = 'Gagal memperbarui konfigurasi toko';
-
-      if (data is Map) {
-        message = data['error'] ?? message;
-      }
-
-      return Left(Failure(message));
+      return Left(Failure(e.response?.data['error'] ?? 'Gagal memperbarui sesi'));
     } catch (e) {
-      return Left(Failure('Koneksi bermasalah'));
+      return Left(Failure('Gagal memperbarui sesi'));
     }
   }
 }

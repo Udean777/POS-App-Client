@@ -1,9 +1,9 @@
 import 'package:client/core/errors/failure.dart';
-import 'package:client/features/auth/domain/repositories/auth_repository.dart';
+import 'package:client/features/staff/domain/repositories/staff_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
 class CreateStaffUsecase {
-  final AuthRepository repository;
+  final StaffRepository repository;
 
   CreateStaffUsecase(this.repository);
 

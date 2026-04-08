@@ -18,10 +18,7 @@ class LowStockWarningCard extends ConsumerWidget {
         for (var product in products) {
           for (var variant in product.variants) {
             if (variant.stock <= 10) {
-              lowStockVariants.add({
-                'product': product,
-                'variant': variant,
-              });
+              lowStockVariants.add({'product': product, 'variant': variant});
             }
           }
         }
@@ -42,7 +39,10 @@ class LowStockWarningCard extends ConsumerWidget {
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
-                  const Icon(Icons.warning_amber_rounded, color: AppColors.danger),
+                  const Icon(
+                    Icons.warning_amber_rounded,
+                    color: AppColors.danger,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -75,11 +75,15 @@ class LowStockWarningCard extends ConsumerWidget {
         );
       },
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
     );
   }
 
-  void _showLowStockDialog(BuildContext context, WidgetRef ref, List<Map<String, dynamic>> items) {
+  void _showLowStockDialog(
+    BuildContext context,
+    WidgetRef ref,
+    List<Map<String, dynamic>> items,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -98,10 +102,7 @@ class LowStockWarningCard extends ConsumerWidget {
                   padding: EdgeInsets.all(16.0),
                   child: Text(
                     "Butuh Restock",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const Divider(),
@@ -117,8 +118,10 @@ class LowStockWarningCard extends ConsumerWidget {
                       return ListTile(
                         leading: CircleAvatar(
                           backgroundColor: AppColors.dangerOpaque,
-                          child:
-                              const Icon(Icons.inventory, color: AppColors.danger),
+                          child: const Icon(
+                            Icons.inventory,
+                            color: AppColors.danger,
+                          ),
                         ),
                         title: Text("${product.name} - ${variant.name}"),
                         subtitle: Text(
@@ -148,7 +151,11 @@ class LowStockWarningCard extends ConsumerWidget {
     );
   }
 
-  void _showRestockPrompt(BuildContext context, WidgetRef ref, VariantEntity variant) {
+  void _showRestockPrompt(
+    BuildContext context,
+    WidgetRef ref,
+    VariantEntity variant,
+  ) {
     final quantityController = TextEditingController();
 
     showDialog(
