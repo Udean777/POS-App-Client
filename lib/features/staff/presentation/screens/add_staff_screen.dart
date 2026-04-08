@@ -114,21 +114,52 @@ class _AddStaffScreenState extends ConsumerState<AddStaffScreen> {
               const SizedBox(height: 20),
 
               // Role Selection
-              DropdownButtonFormField<String>(
-                value: _selectedRole,
-                decoration: const InputDecoration(
-                  labelText: "Pilih Role / Jabatan",
-                  prefixIcon: Icon(Icons.badge_outlined),
+              Text(
+                "Pilih Role / Jabatan",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: AppColors.textHeadline,
+                  fontSize: 16,
                 ),
-                items: _roles
-                    .map(
-                      (role) =>
-                          DropdownMenuItem(value: role, child: Text(role)),
-                    )
-                    .toList(),
-                onChanged: (v) {
-                  if (v != null) setState(() => _selectedRole = v);
-                },
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: _roles.map((role) {
+                  final isSelected = _selectedRole == role;
+                  return ChoiceChip(
+                    showCheckmark: false,
+                    label: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      child: Text(role),
+                    ),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      if (selected) setState(() => _selectedRole = role);
+                    },
+                    selectedColor: AppColors.primary,
+                    backgroundColor: Colors.white,
+                    side: BorderSide(
+                      color: isSelected ? AppColors.primary : AppColors.border,
+                      width: 1.5,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    labelStyle: Theme.of(context).textTheme.bodyMedium
+                        ?.copyWith(
+                          color: isSelected
+                              ? Colors.white
+                              : AppColors.textSecondary,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.w500,
+                        ),
+                  );
+                }).toList(),
               ),
               const SizedBox(height: 48),
 

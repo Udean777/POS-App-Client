@@ -1,4 +1,4 @@
-import 'package:client/features/auth/domain/providers/auth_domain_providers.dart';
+import 'package:client/features/store/domain/providers/store_domain_providers.dart';
 import 'package:client/features/profile/presentation/providers/profile_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -19,9 +19,9 @@ class StoreConfigNotifier extends _$StoreConfigNotifier {
     String? logoUrl,
   }) async {
     state = const AsyncValue.loading();
-    final repository = ref.read(authRepositoryProvider);
+    final usecase = ref.read(updateBusinessUsecaseProvider);
 
-    final result = await repository.updateBusiness(
+    final result = await usecase.execute(
       name: name,
       type: type,
       address: address,

@@ -1,3 +1,4 @@
+import 'package:client/core/constants/route_constants.dart';
 import 'package:client/features/auth/presentation/providers/auth_notifier.dart';
 import 'package:client/features/auth/presentation/providers/state/auth_state.dart';
 import 'package:client/core/presentation/widgets/app_text_field.dart';
@@ -31,13 +32,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     ref.listen<AuthState>(authNotifierProvider, (previous, next) {
       next.maybeWhen(
         authenticated: () {
-          context.goNamed('dashboard');
+          context.goNamed(RouteNames.dashboard);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Login Berhasil!'),
               backgroundColor: AppColors.success,
             ),
           );
+        },
+        unverified: (email) {
+          context.goNamed(RouteNames.otp, extra: email);
         },
         error: (message) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -109,7 +113,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   alignment: Alignment.centerRight,
                   child: AppTextButton(
                     onPressed: () {
-                      // Handle forgot password
+                      context.pushNamed(RouteNames.forgotPassword);
                     },
                     text: "Lupa Password?",
                   ),

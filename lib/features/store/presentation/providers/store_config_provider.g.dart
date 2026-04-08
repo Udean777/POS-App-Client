@@ -42,7 +42,7 @@ final class StoreConfigNotifierProvider
 }
 
 String _$storeConfigNotifierHash() =>
-    r'8d872ada530d3e06cc72ab3d678b272f4ee2ac25';
+    r'070a8b8e44b76f946d2cd1bdb4f578f257016784';
 
 abstract class _$StoreConfigNotifier extends $Notifier<AsyncValue<void>> {
   AsyncValue<void> build();

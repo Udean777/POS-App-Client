@@ -1,3 +1,4 @@
+import 'package:client/core/constants/route_constants.dart';
 import 'package:client/features/auth/presentation/providers/auth_notifier.dart';
 import 'package:client/features/auth/presentation/providers/state/auth_state.dart';
 import 'package:client/core/presentation/widgets/app_text_field.dart';
@@ -32,21 +33,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     ref.listen<AuthState>(authNotifierProvider, (previous, next) {
       next.maybeWhen(
-        initial: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Registrasi Berhasil! Silakan Login.'),
-              backgroundColor: AppColors.success,
-            ),
-          );
-          context.goNamed('login');
+        unverified: (email) {
+          context.goNamed(RouteNames.otp, extra: email);
         },
         error: (message) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(message),
-              backgroundColor: AppColors.danger,
-            ),
+            SnackBar(content: Text(message), backgroundColor: AppColors.danger),
           );
         },
         orElse: () {},

@@ -22,9 +22,16 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final result = await remoteDataSource.login(email, password);
 
-      await storage.write(key: AppConstants.tokenKey, value: result.token);
+      await storage.write(
+        key: AppConstants.tokenKey,
+        value: result.accessToken,
+      );
+      await storage.write(
+        key: AppConstants.refreshTokenKey,
+        value: result.refreshToken,
+      );
 
-      return Right(result.token);
+      return Right(result.accessToken);
     } on DioException catch (e) {
       final dynamic data = e.response?.data;
       String message = 'Terjadi kesalahan pada server';
@@ -86,67 +93,57 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> createStaff({
-    required String email,
-    required String password,
-    required String role,
-  }) async {
+  Future<Either<Failure, String>> refresh() async {
     try {
-      await remoteDataSource.createStaff(email, password, role);
-      return const Right(null);
-    } on DioException catch (e) {
-      final dynamic data = e.response?.data;
-      String message = 'Gagal mendaftarkan staf';
-
-      if (data is Map) {
-        message = data['error'] ?? message;
-      }
-
-      return Left(Failure(message));
-    } catch (e) {
-      return Left(Failure('Koneksi bermasalah'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<UserEntity>>> getStaff() async {
-    try {
-      final models = await remoteDataSource.fetchStaff();
-      return Right(models.map((e) => e.toEntity()).toList());
-    } on DioException catch (e) {
-      final dynamic data = e.response?.data;
-      String message = 'Gagal mengambil data staf';
-
-      if (data is Map) {
-        message = data['error'] ?? message;
-      }
-
-      return Left(Failure(message));
-    } catch (e) {
-      return Left(Failure('Koneksi bermasalah'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, void>> updateBusiness({
-    required String name,
-    required String type,
-    required String address,
-    required String phone,
-    String? logoUrl,
-  }) async {
-    try {
-      await remoteDataSource.updateBusiness(
-        name: name,
-        type: type,
-        address: address,
-        phone: phone,
-        logoUrl: logoUrl,
+      final oldRefreshToken = await storage.read(
+        key: AppConstants.refreshTokenKey,
       );
-      return const Right(null);
+      if (oldRefreshToken == null) {
+        return Left(Failure('Sesi telah berakhir'));
+      }
+
+      final result = await remoteDataSource.refresh(oldRefreshToken);
+
+      await storage.write(
+        key: AppConstants.tokenKey,
+        value: result.accessToken,
+      );
+      await storage.write(
+        key: AppConstants.refreshTokenKey,
+        value: result.refreshToken,
+      );
+
+      return Right(result.accessToken);
+    } on DioException catch (e) {
+      return Left(
+        Failure(e.response?.data['error'] ?? 'Gagal memperbarui sesi'),
+      );
+    } catch (e) {
+      return Left(Failure('Gagal memperbarui sesi'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> verifyOTP({
+    required String email,
+    required String code,
+  }) async {
+    try {
+      final result = await remoteDataSource.verifyOTP(email, code);
+
+      await storage.write(
+        key: AppConstants.tokenKey,
+        value: result.accessToken,
+      );
+      await storage.write(
+        key: AppConstants.refreshTokenKey,
+        value: result.refreshToken,
+      );
+
+      return Right(result.accessToken);
     } on DioException catch (e) {
       final dynamic data = e.response?.data;
-      String message = 'Gagal memperbarui konfigurasi toko';
+      String message = 'Gagal memverifikasi kode';
 
       if (data is Map) {
         message = data['error'] ?? message;
@@ -154,7 +151,80 @@ class AuthRepositoryImpl implements AuthRepository {
 
       return Left(Failure(message));
     } catch (e) {
-      return Left(Failure('Koneksi bermasalah'));
+      return Left(Failure('Koneksi bermasalah, silakan coba lagi'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> resendOTP({required String email}) async {
+    try {
+      await remoteDataSource.resendOTP(email);
+      return const Right(null);
+    } on DioException catch (e) {
+      final dynamic data = e.response?.data;
+      String message = 'Gagal mengirim ulang kode';
+
+      if (data is Map) {
+        message = data['error'] ?? message;
+      }
+
+      return Left(Failure(message));
+    } catch (e) {
+      return Left(Failure('Koneksi bermasalah, silakan coba lagi'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> forgotPassword({required String email}) async {
+    try {
+      await remoteDataSource.forgotPassword(email);
+      return const Right(null);
+    } on DioException catch (e) {
+      final dynamic data = e.response?.data;
+      String message = 'Gagal memproses permintaan reset password';
+
+      if (data is Map) {
+        message = data['error'] ?? message;
+      }
+      return Left(Failure(message));
+    } catch (e) {
+      return Left(Failure('Koneksi bermasalah, silakan coba lagi'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) async {
+    try {
+      final result = await remoteDataSource.resetPassword(
+        email,
+        code,
+        newPassword,
+      );
+
+      await storage.write(
+        key: AppConstants.tokenKey,
+        value: result.accessToken,
+      );
+      await storage.write(
+        key: AppConstants.refreshTokenKey,
+        value: result.refreshToken,
+      );
+
+      return Right(result.accessToken);
+    } on DioException catch (e) {
+      final dynamic data = e.response?.data;
+      String message = 'Gagal mereset password';
+
+      if (data is Map) {
+        message = data['error'] ?? message;
+      }
+      return Left(Failure(message));
+    } catch (e) {
+      return Left(Failure('Koneksi bermasalah, silakan coba lagi'));
     }
   }
 }

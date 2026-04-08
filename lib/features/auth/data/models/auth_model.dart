@@ -37,11 +37,15 @@ extension UserModelX on UserModel {
 }
 
 class LoginResponse {
-  final String token;
+  final String accessToken;
+  final String refreshToken;
 
-  LoginResponse({required this.token});
+  LoginResponse({required this.accessToken, required this.refreshToken});
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
-    return LoginResponse(token: json['token'] ?? '');
+    return LoginResponse(
+      accessToken: json['access_token'] ?? '',
+      refreshToken: json['refresh_token'] ?? '',
+    );
   }
 }

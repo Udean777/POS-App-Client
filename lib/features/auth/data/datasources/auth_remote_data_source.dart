@@ -5,15 +5,15 @@ abstract class AuthRemoteDataSource {
   Future<LoginResponse> login(String email, String password);
   Future<void> register(String email, String password, String businessName);
   Future<UserModel> fetchProfile();
-  Future<void> createStaff(String email, String password, String role);
-  Future<List<UserModel>> fetchStaff();
-  Future<void> updateBusiness({
-    required String name,
-    required String type,
-    required String address,
-    required String phone,
-    String? logoUrl,
-  });
+  Future<LoginResponse> refresh(String refreshToken);
+  Future<LoginResponse> verifyOTP(String email, String code);
+  Future<void> resendOTP(String email);
+  Future<void> forgotPassword(String email);
+  Future<LoginResponse> resetPassword(
+    String email,
+    String code,
+    String newPassword,
+  );
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -53,37 +53,47 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> createStaff(String email, String password, String role) async {
-    await _dio.post(
-      '/auth/staff',
-      data: {'email': email, 'password': password, 'role': role},
+  Future<LoginResponse> refresh(String refreshToken) async {
+    final response = await _dio.post(
+      '/auth/refresh',
+      data: {'refresh_token': refreshToken},
     );
+    return LoginResponse.fromJson(response.data);
   }
 
   @override
-  Future<List<UserModel>> fetchStaff() async {
-    final response = await _dio.get('/auth/staff');
-    final List list = response.data;
-    return list.map((e) => UserModel.fromJson(e)).toList();
+  Future<LoginResponse> verifyOTP(String email, String code) async {
+    final response = await _dio.post(
+      '/auth/verify-otp',
+      data: {'email': email, 'code': code},
+    );
+    return LoginResponse.fromJson(response.data);
   }
 
   @override
-  Future<void> updateBusiness({
-    required String name,
-    required String type,
-    required String address,
-    required String phone,
-    String? logoUrl,
-  }) async {
-    await _dio.put(
-      '/auth/business',
+  Future<void> resendOTP(String email) async {
+    await _dio.post('/auth/resend-otp', data: {'email': email});
+  }
+
+  @override
+  Future<void> forgotPassword(String email) async {
+    await _dio.post('/auth/forgot-password', data: {'email': email});
+  }
+
+  @override
+  Future<LoginResponse> resetPassword(
+    String email,
+    String code,
+    String newPassword,
+  ) async {
+    final response = await _dio.post(
+      '/auth/reset-password',
       data: {
-        'name': name,
-        'type': type,
-        'address': address,
-        'phone': phone,
-        'logo_url': logoUrl,
+        'email': email,
+        'code': code,
+        'new_password': newPassword,
       },
     );
+    return LoginResponse.fromJson(response.data);
   }
 }

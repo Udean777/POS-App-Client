@@ -15,20 +15,18 @@ abstract class AuthRepository {
   });
 
   Future<Either<Failure, UserEntity>> getCurrentUser();
+  Future<Either<Failure, String>> refresh();
 
-  Future<Either<Failure, void>> createStaff({
+  Future<Either<Failure, String>> verifyOTP({
     required String email,
-    required String password,
-    required String role,
+    required String code,
   });
 
-  Future<Either<Failure, List<UserEntity>>> getStaff();
-
-  Future<Either<Failure, void>> updateBusiness({
-    required String name,
-    required String type,
-    required String address,
-    required String phone,
-    String? logoUrl,
+  Future<Either<Failure, void>> resendOTP({required String email});
+  Future<Either<Failure, void>> forgotPassword({required String email});
+  Future<Either<Failure, String>> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
   });
 }
