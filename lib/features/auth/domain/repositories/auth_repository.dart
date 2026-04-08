@@ -16,4 +16,17 @@ abstract class AuthRepository {
 
   Future<Either<Failure, UserEntity>> getCurrentUser();
   Future<Either<Failure, String>> refresh();
+
+  Future<Either<Failure, String>> verifyOTP({
+    required String email,
+    required String code,
+  });
+
+  Future<Either<Failure, void>> resendOTP({required String email});
+  Future<Either<Failure, void>> forgotPassword({required String email});
+  Future<Either<Failure, String>> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  });
 }

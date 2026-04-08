@@ -14,6 +14,9 @@ class RoutePaths {
   static const String editProduct = '/products/:id/edit';
   static const String pos = '/pos';
   static const String history = '/history';
+  static const String otp = '/otp';
+  static const String forgotPassword = '/forgot-password';
+  static const String resetPassword = '/reset-password';
 }
 
 class RouteNames {
@@ -32,4 +35,7 @@ class RouteNames {
   static const String editProduct = 'edit_product';
   static const String pos = 'pos';
   static const String history = 'history';
+  static const String otp = 'otp';
+  static const String forgotPassword = 'forgot_password';
+  static const String resetPassword = 'reset_password';
 }

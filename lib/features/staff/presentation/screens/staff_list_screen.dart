@@ -74,7 +74,10 @@ class StaffListScreen extends ConsumerWidget {
   }
 
   Widget _buildStaffCard(BuildContext context, person) {
-    final bool isOwner = person.role == 'OWNER';
+    final roleInfo = _getRoleInfo(person.role);
+    final String label = roleInfo['label'];
+    final IconData icon = roleInfo['icon'];
+    final Color color = roleInfo['color'];
 
     return AppCard(
       margin: const EdgeInsets.only(bottom: 16),
@@ -83,12 +86,8 @@ class StaffListScreen extends ConsumerWidget {
         children: [
           CircleAvatar(
             radius: 24,
-            backgroundColor: (isOwner ? AppColors.primary : AppColors.warning)
-                .withValues(alpha: 0.1),
-            child: Icon(
-              isOwner ? Icons.admin_panel_settings : Icons.person,
-              color: isOwner ? AppColors.primary : AppColors.warning,
-            ),
+            backgroundColor: color.withValues(alpha: 0.1),
+            child: Icon(icon, color: color),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -102,7 +101,7 @@ class StaffListScreen extends ConsumerWidget {
                   ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  isOwner ? "Pemilik Toko" : "Kasir / Staf",
+                  label,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: AppColors.textSecondary,
                   ),
@@ -113,14 +112,13 @@ class StaffListScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: (isOwner ? AppColors.primary : AppColors.warning)
-                  .withValues(alpha: 0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              person.role,
+              person.role.toUpperCase(),
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: isOwner ? AppColors.primary : AppColors.warning,
+                color: color,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -128,5 +126,41 @@ class StaffListScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Map<String, dynamic> _getRoleInfo(String role) {
+    switch (role.toUpperCase()) {
+      case 'OWNER':
+        return {
+          'label': 'Pemilik Toko',
+          'icon': Icons.admin_panel_settings,
+          'color': AppColors.primary,
+        };
+      case 'ADMIN':
+        return {
+          'label': 'Administrator',
+          'icon': Icons.manage_accounts,
+          'color': AppColors.info,
+        };
+      case 'KASIR':
+        return {
+          'label': 'Kasir',
+          'icon': Icons.point_of_sale,
+          'color': AppColors.success,
+        };
+      case 'GUDANG':
+        return {
+          'label': 'Bagian Gudang',
+          'icon': Icons.inventory_2,
+          'color': AppColors.warning,
+        };
+      case 'STAFF':
+      default:
+        return {
+          'label': 'Staf Umum',
+          'icon': Icons.person,
+          'color': AppColors.textSecondary,
+        };
+    }
   }
 }

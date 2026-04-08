@@ -22,7 +22,11 @@ class AuthNotifier extends _$AuthNotifier {
 
     await result.fold(
       (failure) async {
-        state = AuthState.error(failure.message);
+        if (failure.message == 'EMAIL_NOT_VERIFIED') {
+          state = AuthState.unverified(email);
+        } else {
+          state = AuthState.error(failure.message);
+        }
       },
       (token) async {
         // Token sudah disimpan di repository layer, di sini kita hanya perlu
@@ -53,7 +57,65 @@ class AuthNotifier extends _$AuthNotifier {
 
     result.fold(
       (failure) => state = AuthState.error(failure.message),
-      (_) => state = const AuthState.initial(),
+      (_) => state = AuthState.unverified(email),
+    );
+  }
+
+  Future<void> verifyOTP(String email, String code) async {
+    state = const AuthState.loading();
+
+    final usecase = ref.read(verifyOTPUsecaseProvider);
+    final result = await usecase.execute(email: email, code: code);
+
+    if (!ref.mounted) return;
+
+    result.fold((failure) => state = AuthState.error(failure.message), (token) {
+      ref.invalidate(isAuthenticatedProvider);
+      state = const AuthState.authenticated();
+    });
+  }
+
+  Future<void> resendOTP(String email) async {
+    final usecase = ref.read(resendOTPUsecaseProvider);
+    await usecase.execute(email: email);
+  }
+
+  Future<void> forgotPassword(String email) async {
+    state = const AuthState.loading();
+
+    final usecase = ref.read(forgotPasswordUsecaseProvider);
+    final result = await usecase.execute(email: email);
+
+    if (!ref.mounted) return;
+
+    result.fold(
+      (failure) => state = AuthState.error(failure.message),
+      (_) => state = AuthState.unverified(email), // Reuse unverified for OTP input
+    );
+  }
+
+  Future<void> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) async {
+    state = const AuthState.loading();
+
+    final usecase = ref.read(resetPasswordUsecaseProvider);
+    final result = await usecase.execute(
+      email: email,
+      code: code,
+      newPassword: newPassword,
+    );
+
+    if (!ref.mounted) return;
+
+    result.fold(
+      (failure) => state = AuthState.error(failure.message),
+      (token) {
+        ref.invalidate(isAuthenticatedProvider);
+        state = const AuthState.authenticated();
+      },
     );
   }
 

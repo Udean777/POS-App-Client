@@ -95,7 +95,9 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, String>> refresh() async {
     try {
-      final oldRefreshToken = await storage.read(key: AppConstants.refreshTokenKey);
+      final oldRefreshToken = await storage.read(
+        key: AppConstants.refreshTokenKey,
+      );
       if (oldRefreshToken == null) {
         return Left(Failure('Sesi telah berakhir'));
       }
@@ -113,9 +115,116 @@ class AuthRepositoryImpl implements AuthRepository {
 
       return Right(result.accessToken);
     } on DioException catch (e) {
-      return Left(Failure(e.response?.data['error'] ?? 'Gagal memperbarui sesi'));
+      return Left(
+        Failure(e.response?.data['error'] ?? 'Gagal memperbarui sesi'),
+      );
     } catch (e) {
       return Left(Failure('Gagal memperbarui sesi'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> verifyOTP({
+    required String email,
+    required String code,
+  }) async {
+    try {
+      final result = await remoteDataSource.verifyOTP(email, code);
+
+      await storage.write(
+        key: AppConstants.tokenKey,
+        value: result.accessToken,
+      );
+      await storage.write(
+        key: AppConstants.refreshTokenKey,
+        value: result.refreshToken,
+      );
+
+      return Right(result.accessToken);
+    } on DioException catch (e) {
+      final dynamic data = e.response?.data;
+      String message = 'Gagal memverifikasi kode';
+
+      if (data is Map) {
+        message = data['error'] ?? message;
+      }
+
+      return Left(Failure(message));
+    } catch (e) {
+      return Left(Failure('Koneksi bermasalah, silakan coba lagi'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> resendOTP({required String email}) async {
+    try {
+      await remoteDataSource.resendOTP(email);
+      return const Right(null);
+    } on DioException catch (e) {
+      final dynamic data = e.response?.data;
+      String message = 'Gagal mengirim ulang kode';
+
+      if (data is Map) {
+        message = data['error'] ?? message;
+      }
+
+      return Left(Failure(message));
+    } catch (e) {
+      return Left(Failure('Koneksi bermasalah, silakan coba lagi'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> forgotPassword({required String email}) async {
+    try {
+      await remoteDataSource.forgotPassword(email);
+      return const Right(null);
+    } on DioException catch (e) {
+      final dynamic data = e.response?.data;
+      String message = 'Gagal memproses permintaan reset password';
+
+      if (data is Map) {
+        message = data['error'] ?? message;
+      }
+      return Left(Failure(message));
+    } catch (e) {
+      return Left(Failure('Koneksi bermasalah, silakan coba lagi'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) async {
+    try {
+      final result = await remoteDataSource.resetPassword(
+        email,
+        code,
+        newPassword,
+      );
+
+      await storage.write(
+        key: AppConstants.tokenKey,
+        value: result.accessToken,
+      );
+      await storage.write(
+        key: AppConstants.refreshTokenKey,
+        value: result.refreshToken,
+      );
+
+      return Right(result.accessToken);
+    } on DioException catch (e) {
+      final dynamic data = e.response?.data;
+      String message = 'Gagal mereset password';
+
+      if (data is Map) {
+        message = data['error'] ?? message;
+      }
+      return Left(Failure(message));
+    } catch (e) {
+      return Left(Failure('Koneksi bermasalah, silakan coba lagi'));
     }
   }
 }

@@ -3,8 +3,11 @@ import 'package:client/features/auth/presentation/providers/auth_notifier.dart';
 import 'package:client/features/auth/presentation/providers/auth_status_provider.dart';
 import 'package:client/features/staff/presentation/screens/add_staff_screen.dart';
 import 'package:client/features/auth/presentation/screens/login_screen.dart';
+import 'package:client/features/auth/presentation/screens/otp_verification_screen.dart';
 import 'package:client/features/profile/presentation/screens/profile_screen.dart';
 import 'package:client/features/auth/presentation/screens/register_screen.dart';
+import 'package:client/features/auth/presentation/screens/forgot_password_screen.dart';
+import 'package:client/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:client/features/staff/presentation/screens/staff_list_screen.dart';
 import 'package:client/features/store/presentation/screens/store_config_screen.dart';
 import 'package:client/features/dashboard/presentation/screens/all_menu_screen.dart';
@@ -37,16 +40,10 @@ class RouterNotifier extends ChangeNotifier {
 
 @riverpod
 GoRouter goRouter(Ref ref) {
-  final authState = ref.watch(authNotifierProvider);
-  final authStatus = ref.watch(isAuthenticatedProvider);
-
   return GoRouter(
     initialLocation: RoutePaths.dashboard,
     refreshListenable: RouterNotifier(ref),
-    redirect: (context, state) => AuthGuard(
-      authState: authState,
-      authStatus: authStatus,
-    ).redirect(context, state),
+    redirect: (context, state) => AuthGuard(ref).redirect(context, state),
     routes: [
       // --- Auth Routes (fade transition) ---
       GoRoute(
@@ -62,6 +59,36 @@ GoRouter goRouter(Ref ref) {
           state: state,
           child: const RegisterScreen(),
         ),
+      ),
+      GoRoute(
+        path: RoutePaths.otp,
+        name: RouteNames.otp,
+        pageBuilder: (context, state) {
+          final email = state.extra as String? ?? '';
+          return AppPageTransitions.fade(
+            state: state,
+            child: OtpVerificationScreen(email: email),
+          );
+        },
+      ),
+      GoRoute(
+        path: RoutePaths.forgotPassword,
+        name: RouteNames.forgotPassword,
+        pageBuilder: (context, state) => AppPageTransitions.slideRight(
+          state: state,
+          child: const ForgotPasswordScreen(),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.resetPassword,
+        name: RouteNames.resetPassword,
+        pageBuilder: (context, state) {
+          final email = state.extra as String? ?? '';
+          return AppPageTransitions.fade(
+            state: state,
+            child: ResetPasswordScreen(email: email),
+          );
+        },
       ),
 
       // --- Main Application Shell (Bottom Navigation) ---
