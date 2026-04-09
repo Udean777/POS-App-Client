@@ -78,8 +78,8 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
   }
 
   // Menangani tombol backspace (hapus)
-  void _handleKeyPress(RawKeyEvent event, int index) {
-    if (event is RawKeyDownEvent &&
+  void _handleKeyPress(KeyEvent event, int index) {
+    if (event is KeyDownEvent &&
         event.logicalKey == LogicalKeyboardKey.backspace) {
       if (_controllers[index].text.isEmpty && index > 0) {
         // Pindah ke kolom sebelumnya dan hapus isinya
@@ -185,9 +185,9 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
                 children: List.generate(6, (index) {
                   return SizedBox(
                     width: (MediaQuery.of(context).size.width - 48 - 40) / 6,
-                    child: RawKeyboardListener(
+                    child: KeyboardListener(
                       focusNode: FocusNode(), // Dummy focus node for listener
-                      onKey: (event) => _handleKeyPress(event, index),
+                      onKeyEvent: (event) => _handleKeyPress(event, index),
                       child: TextField(
                         controller: _controllers[index],
                         focusNode: _focusNodes[index],
